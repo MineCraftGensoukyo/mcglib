@@ -11,7 +11,13 @@ import org.apache.logging.log4j.Logger;
  * @author Administrator
  */
 @SuppressWarnings("AlibabaClassNamingShouldBeCamel")
-@Mod(modid = MCGLib.MODID, name = MCGLib.NAME, version = MCGLib.VERSION)
+@Mod(
+        modid = MCGLib.MODID,
+        name = MCGLib.NAME,
+        version = MCGLib.VERSION,
+        useMetadata = true,
+        acceptableRemoteVersions = "*"
+)
 public class MCGLib
 {
     public static final String MODID = "mcglib";
