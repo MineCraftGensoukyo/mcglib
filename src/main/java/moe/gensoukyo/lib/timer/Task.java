@@ -71,6 +71,11 @@ public class Task implements ITask {
         items.clear();
     }
 
+    @Override
+    public boolean isEmpty() {
+        return items.isEmpty();
+    }
+
     @SubscribeEvent
     public static void onServerTick(TickEvent.ServerTickEvent event) {
         onTick(event, Side.SERVER);

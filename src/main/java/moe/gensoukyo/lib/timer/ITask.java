@@ -1,6 +1,7 @@
 package moe.gensoukyo.lib.timer;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
 import java.util.function.Consumer;
 
 /**
@@ -40,6 +41,12 @@ public interface ITask {
      * Clear all scheduled tasks
      */
     void clear();
+
+    /**
+     * Whether the task object is empty (has no task items)
+     * @return Whether the task object has no task items
+     */
+    boolean isEmpty();
 
     /**
      * Updates all tasks' countdown
