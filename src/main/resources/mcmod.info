@@ -11,6 +11,8 @@
   "credits": "Forge",
   "logoFile": "",
   "screenshots": [],
-  "dependencies": []
+
+  "useDependencyInformation": true,
+  "dependencies": ["customnpcs"]
 }
 ]
