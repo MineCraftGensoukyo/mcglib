@@ -38,7 +38,7 @@ object EntityEventHandler {
     @JvmStatic
     @SubscribeEvent
     fun onFMLPlayerEvent(e: FMLPlayerEvent) {
-        runPlayerEvent(e.player, e)
+        runPlayerEvent(e.player ?: return, e)
     }
 
     private fun runPlayerEvent(player: EntityPlayer, event: Event) {

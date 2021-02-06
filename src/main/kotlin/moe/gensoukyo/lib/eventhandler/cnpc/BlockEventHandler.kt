@@ -22,7 +22,7 @@ object BlockEventHandler {
     @SubscribeEvent
     @Optional.Method(modid = ModIds.CNPC)
     fun onBlockEvent(e: BlockEvent) {
-        if (e.world.isRemote) return
+        if (e.world?.isRemote != false) return
 
         val block = e.world.getTileEntity(e.pos) ?: return
         if (block is IScriptHandler) {
