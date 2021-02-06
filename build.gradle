@@ -13,7 +13,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
 
-version = "1.0.0"
+version = mod_version
 group = "moe.gensoukyo.lib" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "MCGLib"
 
@@ -25,6 +25,9 @@ compileJava {
 minecraft {
     version = "1.12.2-14.23.5.2847"
     runDir = "run"
+
+    replaceIn "MCGLib.java"
+    replace "@VERSION@", mod_version
     
     // the mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   snapshot are built nightly.
@@ -58,13 +61,34 @@ repositories {
     flatDir {
         dir 'lib'
     }
+    maven {
+        url = "http://maven.ljxmc.top/repository/handy-minecraft/"
+    }
+    maven {
+        url = "https://hub.spigotmc.org/nexus/content/repositories/public/"
+    }
+    maven {
+        url "http://maven.shadowfacts.net/"
+    }
 }
 
 dependencies {
     compile group: "noppes.npcs", name:"CustomNPCs_1.12.2", version: "(05Jul20)-deobf"
 
+    runtimeOnly group: "net.shadowfacts", name: "Forgelin", version: "1.8.3"
+    compile "yay.louder:kotlinpool:1.1.3"
+    // 插件
+    compile "org.bukkit:bukkit:1.12.2-R0.1-SNAPSHOT"
+    compile "org.serverct.ersha.jd:AttributePlus:2.2.9.2"
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
+
+    implementation group: "org.jetbrains.kotlin", name: "kotlin-stdlib", version: kotlin_version
+    implementation group: "org.jetbrains.kotlin", name: "kotlin-stdlib-jdk7", version: kotlin_version
+    implementation group: "org.jetbrains.kotlin", name: "kotlin-stdlib-jdk8", version: kotlin_version
+    implementation group: "org.jetbrains.kotlin", name: "kotlin-reflect", version: kotlin_version
+    testImplementation "org.jetbrains.kotlin:kotlin-script-runtime:1.3.40"
 }
 
 test {
@@ -73,4 +97,9 @@ test {
 
 tasks.withType(JavaCompile) {
     options.encoding = "utf8"
+}
+
+compileKotlin {
+    // 修复 Kotlin 使用 MethodHandle 不响应多态签名的 bug
+    kotlinOptions.freeCompilerArgs = ["-Xpolymorphic-signature"]
 }

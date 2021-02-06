@@ -17,7 +17,7 @@ import java.util.function.Consumer;
 
 /**
  * Task impl with auto update possibility.
- * @author zat, Chloe_koopa
+ * @author zat, ChloePrime
  */
 @Mod.EventBusSubscriber(modid = MCGLib.MODID)
 public class Task implements ITask {
@@ -116,6 +116,9 @@ public class Task implements ITask {
                 continue;
             }
             item.update();
+            if (item.isTerminated()) {
+                i.remove();
+            }
         }
     }
 

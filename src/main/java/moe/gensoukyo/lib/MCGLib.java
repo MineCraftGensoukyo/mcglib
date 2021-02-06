@@ -8,7 +8,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.Logger;
 
 /**
- * @author Administrator
+ * @author ChloePrime
  */
 @SuppressWarnings("AlibabaClassNamingShouldBeCamel")
 @Mod(
@@ -22,7 +22,7 @@ public class MCGLib
 {
     public static final String MODID = "mcglib";
     public static final String NAME = "MCG Lib";
-    public static final String VERSION = "1.0.0";
+    public static final String VERSION = "@VERSION@";
 
     public static Logger getLogger() {
         return logger;

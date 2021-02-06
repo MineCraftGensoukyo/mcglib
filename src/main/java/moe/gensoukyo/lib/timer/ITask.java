@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.function.Consumer;
 
 /**
- * @author Chloe_koopa
+ * @author ChloePrime
  */
 @SuppressWarnings("unused")
 public interface ITask {
