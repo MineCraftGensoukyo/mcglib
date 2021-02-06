@@ -11,6 +11,7 @@ import net.minecraftforge.fml.common.eventhandler.Event
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import noppes.npcs.controllers.data.PlayerData
 import noppes.npcs.entity.EntityNPCInterface
+import java.lang.Exception
 import net.minecraftforge.fml.common.gameevent.PlayerEvent as FMLPlayerEvent
 
 /**
@@ -21,6 +22,7 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent as FMLPlayerEvent
  */
 @Mod.EventBusSubscriber(modid = MCGLib.MODID)
 object EntityEventHandler {
+    private val badEventTypes = HashSet<Class<out Event>>()
     @JvmStatic
     @SubscribeEvent
     fun onEntityEvent(e: EntityEvent) {
@@ -40,8 +42,16 @@ object EntityEventHandler {
     }
 
     private fun runPlayerEvent(player: EntityPlayer, event: Event) {
+        if (event.javaClass in badEventTypes) return
+
         if (player.world.isRemote) return
-        PlayerData.get(player).scriptData?.runForgeScript(event)
+        try {
+            PlayerData.get(player).scriptData?.runForgeScript(event)
+        } catch (e: Exception) {
+            MCGLib.getLogger().info("Bad event type: ${event.javaClass.canonicalName}")
+            MCGLib.getLogger().debug("Stacktrace:", e)
+            badEventTypes.add(event.javaClass)
+        }
     }
 
     private fun runNpcEvent(npc: EntityNPCInterface, event: Event) {
