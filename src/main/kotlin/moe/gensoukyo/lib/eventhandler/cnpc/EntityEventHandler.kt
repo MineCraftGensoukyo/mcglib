@@ -26,8 +26,8 @@ object EntityEventHandler {
     @JvmStatic
     @SubscribeEvent
     fun onEntityEvent(e: EntityEvent) {
-        val entity = e.entity
-        if (entity.world.isRemote) return
+        val entity = e.entity ?: return
+        if (entity.world?.isRemote != false) return
         if (entity is EntityPlayer) {
             runPlayerEvent(entity, e)
         } else if (entity is EntityNPCInterface) {
