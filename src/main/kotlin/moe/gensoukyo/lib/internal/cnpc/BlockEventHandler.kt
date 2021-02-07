@@ -1,4 +1,4 @@
-package moe.gensoukyo.lib.eventhandler.cnpc
+package moe.gensoukyo.lib.internal.cnpc
 
 import moe.gensoukyo.lib.MCGLib
 import moe.gensoukyo.lib.constants.ModIds
