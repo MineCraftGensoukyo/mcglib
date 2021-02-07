@@ -1,0 +1,18 @@
+[
+{
+  "modid": "mcglib",
+  "name": "MCG Lib",
+  "description": "Shared codes for Minecraft Gensoukyo server",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["ChloePrime"],
+  "credits": "Forge",
+  "logoFile": "",
+  "screenshots": [],
+
+  "useDependencyInformation": true,
+  "dependencies": ["customnpcs"]
+}
+]

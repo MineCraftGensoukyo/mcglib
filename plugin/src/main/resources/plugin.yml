@@ -1,4 +1,15 @@
-name: MCGLib
-version: @version@
-main: moe.gensoukyo.lib.bukkit.MCGLib
-api-version: 1.16
+
+
+#         Powered by TabooLib 5.0         #
+
+
+name: ${name}
+main: ${main}
+version: ${version}
+authors: ['克洛伊Prime']
+
+api-version: 1.12
+
+lib-download: true
+lib-version: ${libVersion}
+loader-version: ${loaderVersion}
