@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel>
-      <module name="ExamplePlugin" target="1.8" />
-      <module name="ExamplePlugin.main" target="1.8" />
-      <module name="ExamplePlugin.test" target="1.8" />
-      <module name="mcglib.main" target="1.8" />
-      <module name="mcglib.test" target="1.8" />
-      <module name="mee.gensoukyo.MCGLib" target="1.8" />
-      <module name="mee.gensoukyo.MCGLib.main" target="1.8" />
-      <module name="mee.gensoukyo.MCGLib.test" target="1.8" />
-    </bytecodeTargetLevel>
+    <bytecodeTargetLevel target="1.8" />
   </component>
 </project>

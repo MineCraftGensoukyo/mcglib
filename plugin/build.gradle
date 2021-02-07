@@ -26,7 +26,7 @@ dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-stdlib'
     implementation fileTree(dir: 'libs', includes: ['*.jar'])
 
-    //implementation project("mod")
+    implementation project(":mcglib")
 }
 
 processResources {

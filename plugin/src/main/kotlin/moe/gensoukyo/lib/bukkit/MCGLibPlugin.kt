@@ -1,8 +1,8 @@
-package io.izzel.taboolib.example
+package moe.gensoukyo.lib.bukkit
 
 import io.izzel.taboolib.loader.Plugin
 
-object ExamplePlugin : Plugin() {
+object MCGLibPlugin : Plugin() {
 
     override fun onLoad() {
         // override onLoad()

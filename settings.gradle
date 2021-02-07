@@ -1,4 +1,1 @@
-rootProject.name = 'MCGLib'
-
-include 'mod'
-include 'plugin'
+rootProject.name = 'mcglib'
