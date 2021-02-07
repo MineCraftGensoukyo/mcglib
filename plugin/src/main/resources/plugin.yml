@@ -1,0 +1,4 @@
+name: MCGLib
+version: @version@
+main: moe.gensoukyo.lib.bukkit.MCGLib
+api-version: 1.16
