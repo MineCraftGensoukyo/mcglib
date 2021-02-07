@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'io.izzel.taboolib' version '1.3'
-    id 'org.jetbrains.kotlin.jvm' version '1.4.0'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.50'
 }
 
 group = 'moe.gensoukyo'
@@ -25,6 +25,8 @@ dependencies {
     implementation 'ink.ptms.core:v11600:11600:all'
     implementation 'org.jetbrains.kotlin:kotlin-stdlib'
     implementation fileTree(dir: 'libs', includes: ['*.jar'])
+
+    //implementation project("mod")
 }
 
 processResources {
