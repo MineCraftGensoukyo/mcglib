@@ -9,6 +9,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
+import org.apache.commons.io.FileUtils;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -78,15 +79,20 @@ public class ItemSerialization {
     @SuppressWarnings("unused")
     public static void put(String path, ItemStack itemStack)
             throws IOException {
+        CACHE.put(path, itemStack);
+
         Path filePath = getFilePath(path);
         try (Writer writer = Files.newBufferedWriter(filePath)) {
             writer.write(itemStack.serializeNBT().toString());
         }
     }
 
-    private static Path getFilePath(String path) {
+    private static Path getFilePath(String path) throws IOException {
         String filePath = path.replace('.', '/') + ".json";
-        return Paths.get("./" + filePath);
+        Path result = Paths.get("./" + filePath);
+        // Make sure parent path exists
+        FileUtils.forceMkdirParent(result.toFile());
+        return result;
     }
 
 
