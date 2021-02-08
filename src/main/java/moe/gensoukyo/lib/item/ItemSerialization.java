@@ -36,23 +36,19 @@ public class ItemSerialization {
         ERROR.setStackDisplayName("§4Error Item");
     }
 
-    public static ItemStack getUnsafely(String path)
-            throws IOException {
-        if (CACHE.containsKey(path)) {
-            return CACHE.get(path);
-        }
-        return getFromFile(path);
-    }
-
     /**
      * @return The item, when errored, returns a barrier with stacktrace on its lore.
      */
     @SuppressWarnings("unused")
     public static ItemStack get(String path) {
+        if (CACHE.containsKey(path)) {
+            return CACHE.get(path).copy();
+        }
+
         ItemStack item;
         try {
-            item = getUnsafely(path);
-            CACHE.put(path, item);
+            item = getFromFile(path);
+            CACHE.put(path, item.copy());
         } catch (Exception e) {
             MCGLib.getLogger().error("Error deserializing item " + path, e);
             item = ERROR.copy();
@@ -61,6 +57,20 @@ public class ItemSerialization {
         return item;
     }
 
+    @SuppressWarnings("unused")
+    public static ItemStack getUnsafely(String path)
+            throws IOException {
+        if (CACHE.containsKey(path)) {
+            return CACHE.get(path).copy();
+        }
+        ItemStack item = getFromFile(path);
+        CACHE.put(path, item.copy());
+        return item;
+    }
+
+    /**
+     * The returned ItemStack is always a new one.
+     */
     private static ItemStack getFromFile(String path) throws IOException {
         Path filePath = getFilePath(path);
         if (!filePath.toFile().exists()) {
@@ -79,11 +89,12 @@ public class ItemSerialization {
     @SuppressWarnings("unused")
     public static void put(String path, ItemStack itemStack)
             throws IOException {
-        CACHE.put(path, itemStack);
+        ItemStack safeCopy = itemStack.copy();
+        CACHE.put(path, safeCopy);
 
         Path filePath = getFilePath(path);
         try (Writer writer = Files.newBufferedWriter(filePath)) {
-            writer.write(itemStack.serializeNBT().toString());
+            writer.write(safeCopy.serializeNBT().toString());
         }
     }
 

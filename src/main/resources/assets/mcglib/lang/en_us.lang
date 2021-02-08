@@ -1,0 +1,3 @@
+command.mcglib.too.few.args=§cToo few args, expect %s args, found %d
+command.mcglib.player.only=§cOnly players can preform this command
+command.mcglib.error=§cCommand errored, see the log for more info.
