@@ -2,7 +2,6 @@ package moe.gensoukyo.lib.internal.cnpc
 
 import moe.gensoukyo.lib.MCGLib
 import moe.gensoukyo.lib.constants.ModIds
-import moe.gensoukyo.lib.internal.runForgeScript
 import net.minecraftforge.event.world.BlockEvent
 import net.minecraftforge.event.world.WorldEvent
 import net.minecraftforge.fml.common.Mod

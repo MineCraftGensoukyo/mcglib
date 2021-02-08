@@ -1,12 +1,13 @@
 package moe.gensoukyo.lib.internal.cnpc
 
 import moe.gensoukyo.lib.MCGLib
-import moe.gensoukyo.lib.internal.runForgeScript
+import moe.gensoukyo.lib.constants.ModIds
 import moe.gensoukyo.lib.server.bukkit
 import moe.gensoukyo.lib.server.npcApi
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraftforge.event.entity.EntityEvent
 import net.minecraftforge.fml.common.Mod
+import net.minecraftforge.fml.common.Optional
 import net.minecraftforge.fml.common.eventhandler.Event
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import noppes.npcs.controllers.data.PlayerData
@@ -25,6 +26,7 @@ object EntityEventHandler {
     private val badEventTypes = HashSet<Class<out Event>>()
     @JvmStatic
     @SubscribeEvent
+    @Optional.Method(modid = ModIds.CNPC)
     fun onEntityEvent(e: EntityEvent) {
         val entity = e.entity ?: return
         if (entity.world?.isRemote != false) return
@@ -37,6 +39,7 @@ object EntityEventHandler {
 
     @JvmStatic
     @SubscribeEvent
+    @Optional.Method(modid = ModIds.CNPC)
     fun onFMLPlayerEvent(e: FMLPlayerEvent) {
         runPlayerEvent(e.player ?: return, e)
     }
