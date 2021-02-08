@@ -96,6 +96,9 @@ public class ItemSerialization {
     }
 
 
+    /**
+     * Clear item cache
+     */
     public static void reload() {
         CACHE.clear();
     }

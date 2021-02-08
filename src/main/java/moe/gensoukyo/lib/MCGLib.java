@@ -1,10 +1,11 @@
 package moe.gensoukyo.lib;
 
-import net.minecraft.init.Blocks;
+import moe.gensoukyo.lib.internal.command.ModCommandsKt;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import org.apache.logging.log4j.Logger;
 
 /**
@@ -34,5 +35,15 @@ public class MCGLib
     public void preInit(FMLPreInitializationEvent event)
     {
         logger = event.getModLog();
+    }
+
+    @EventHandler
+    public void init(FMLInitializationEvent event) {
+        ModCommandsKt.initPermissions();
+    }
+
+    @EventHandler
+    public void serverStarting(FMLServerStartingEvent event) {
+        ModCommandsKt.registerCommands(event);
     }
 }
