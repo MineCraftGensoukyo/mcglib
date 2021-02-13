@@ -6,7 +6,12 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Logger;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 
 /**
  * @author ChloePrime
@@ -31,15 +36,34 @@ public class MCGLib
 
     private static Logger logger;
 
+    /**
+     * @return the config dir, will always ba an existing folder.
+     */
+    public static File getConfigDir() {
+        return configDir;
+    }
+
+    private static File configDir;
+
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
+        configDir = new File(
+                event.getModConfigurationDirectory(),
+                MCGLib.MODID
+        );
+        try {
+            FileUtils.forceMkdir(configDir);
+        } catch (IOException exception) {
+            throw new ExceptionInInitializerError(exception);
+        }
         logger = event.getModLog();
     }
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
         ModCommandsKt.initPermissions();
+        ModConfig.reload();
     }
 
     @EventHandler

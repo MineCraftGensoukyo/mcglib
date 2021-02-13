@@ -14,25 +14,26 @@ import org.bukkit.entity.Player as BukkitPlayer
 
 // Basic Entity Types
 
-val Entity.bukkit get(): BukkitEntity
-= mc2Bukkit.invoke(this) as BukkitEntity
+val Entity.bukkit: BukkitEntity
+    get() = mc2Bukkit.invoke(this) as BukkitEntity
 
-val BukkitEntity.handle get(): Entity {
-    initBukkit2McHandle(this)
-    return (bukkit2MC?.invoke(this) as? Entity)
-        ?: throw UnsupportedOperationException()
-}
+val BukkitEntity.handle: Entity
+    get() {
+        initBukkit2McHandle(this)
+        return (bukkit2MC?.invoke(this) as? Entity)
+            ?: throw UnsupportedOperationException()
+    }
 
 // Derived Entity Types
 
-val EntityLivingBase.bukkit get(): BukkitLivingEntity
-= (this as Entity).bukkit as BukkitLivingEntity
+val EntityLivingBase.bukkit: BukkitLivingEntity
+    inline get() = (this as Entity).bukkit as BukkitLivingEntity
 
-val BukkitLivingEntity.handle get()
-= (this as BukkitEntity).handle as EntityLivingBase
+val BukkitLivingEntity.handle: EntityLivingBase
+    inline get() = (this as BukkitEntity).handle as EntityLivingBase
 
-val EntityPlayer.bukkit get(): BukkitPlayer
-= (this as Entity).bukkit as BukkitPlayer
+val EntityPlayer.bukkit: BukkitPlayer
+    inline get() = (this as Entity).bukkit as BukkitPlayer
 
-val BukkitPlayer.handle get(): EntityPlayer
-= (this as BukkitEntity).handle as EntityPlayer
+val BukkitPlayer.handle: EntityPlayer
+    inline get() = (this as BukkitEntity).handle as EntityPlayer

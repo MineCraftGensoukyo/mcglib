@@ -10,12 +10,14 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider
 import net.minecraftforge.items.CapabilityItemHandler
 import net.minecraftforge.server.command.CommandTreeBase
 
+/**
+ * @author ChloePrime
+ */
 class CommandSerialItem: CommandTreeBase() {
     companion object {
-        const val PERM_GET = "mcglib.items.get"
-        const val PERM_PUT = "mcglib.items.put"
-        const val PERM_RELOAD = "mcglib.items.reload"
-
+        const val PERM_GET = "${MCGLib.MODID}.items.get"
+        const val PERM_PUT = "${MCGLib.MODID}.items.put"
+        const val PERM_RELOAD = "${MCGLib.MODID}.items.reload"
     }
 
     init {

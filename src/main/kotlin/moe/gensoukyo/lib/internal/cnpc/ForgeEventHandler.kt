@@ -1,6 +1,7 @@
 package moe.gensoukyo.lib.internal.cnpc
 
 import moe.gensoukyo.lib.MCGLib
+import moe.gensoukyo.lib.ModConfig
 import moe.gensoukyo.lib.constants.ModIds
 import net.minecraftforge.event.entity.EntityEvent
 import net.minecraftforge.event.world.BlockEvent
@@ -43,6 +44,8 @@ object ForgeEventHandler {
     @Optional.Method(modid = ModIds.CNPC)
     fun onForgeEvent(e: Event) {
         if (FMLCommonHandler.instance().effectiveSide.isClient) return
+        if (!isEventInWhitelist(e)) return
+
         if (BLACKLIST.any { clazz -> clazz.isInstance(e) }) return
 
         ScriptController.Instance?.forgeScripts?.runForgeScript(e)

@@ -32,6 +32,7 @@ internal fun initPermissions() {
 
 internal fun registerCommands(e: FMLServerStartingEvent) {
     e.registerServerCommand(CommandSerialItem())
+    e.registerServerCommand(CommandMCGLib())
 }
 
 internal fun notifyTooFewArgs(

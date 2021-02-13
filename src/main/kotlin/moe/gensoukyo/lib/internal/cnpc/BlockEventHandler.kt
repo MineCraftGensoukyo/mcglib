@@ -1,6 +1,7 @@
 package moe.gensoukyo.lib.internal.cnpc
 
 import moe.gensoukyo.lib.MCGLib
+import moe.gensoukyo.lib.ModConfig
 import moe.gensoukyo.lib.constants.ModIds
 import net.minecraftforge.event.world.BlockEvent
 import net.minecraftforge.event.world.WorldEvent
@@ -22,6 +23,7 @@ object BlockEventHandler {
     @Optional.Method(modid = ModIds.CNPC)
     fun onBlockEvent(e: BlockEvent) {
         if (e.world?.isRemote != false) return
+        if (!isEventInWhitelist(e)) return
 
         val block = e.world.getTileEntity(e.pos) ?: return
         if (block is IScriptHandler) {
@@ -34,6 +36,8 @@ object BlockEventHandler {
     @Optional.Method(modid = ModIds.CNPC)
     fun onWorldEvent(e: WorldEvent) {
         if (e.world.isRemote) return
+        if (!isEventInWhitelist(e)) return
+
         ScriptController.Instance?.forgeScripts?.runForgeScript(e)
     }
 }

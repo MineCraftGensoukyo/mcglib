@@ -3,7 +3,7 @@ package moe.gensoukyo.lib.internal.cnpc
 import moe.gensoukyo.lib.MCGLib
 import moe.gensoukyo.lib.constants.ModIds
 import moe.gensoukyo.lib.server.bukkit
-import moe.gensoukyo.lib.server.npcApi
+import moe.gensoukyo.lib.util.cnpc.npcApi
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraftforge.event.entity.EntityEvent
 import net.minecraftforge.fml.common.Mod
@@ -30,6 +30,8 @@ object EntityEventHandler {
     fun onEntityEvent(e: EntityEvent) {
         val entity = e.entity ?: return
         if (entity.world?.isRemote != false) return
+        if (!isEventInWhitelist(e)) return
+
         if (entity is EntityPlayer) {
             runPlayerEvent(entity, e)
         } else if (entity is EntityNPCInterface) {
@@ -41,6 +43,7 @@ object EntityEventHandler {
     @SubscribeEvent
     @Optional.Method(modid = ModIds.CNPC)
     fun onFMLPlayerEvent(e: FMLPlayerEvent) {
+        if (!isEventInWhitelist(e)) return
         runPlayerEvent(e.player ?: return, e)
     }
 
