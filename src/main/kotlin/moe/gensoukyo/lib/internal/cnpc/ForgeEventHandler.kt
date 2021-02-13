@@ -1,7 +1,6 @@
 package moe.gensoukyo.lib.internal.cnpc
 
 import moe.gensoukyo.lib.MCGLib
-import moe.gensoukyo.lib.ModConfig
 import moe.gensoukyo.lib.constants.ModIds
 import moe.gensoukyo.lib.scripting.runScript
 import net.minecraftforge.event.entity.EntityEvent

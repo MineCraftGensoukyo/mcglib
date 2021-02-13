@@ -1,7 +1,11 @@
 package moe.gensoukyo.lib.scripting
 
 import moe.gensoukyo.lib.internal.HookPool
+import net.minecraft.entity.Entity
+import net.minecraft.entity.player.EntityPlayer
 import noppes.npcs.controllers.IScriptHandler
+import noppes.npcs.controllers.data.PlayerData
+import noppes.npcs.entity.EntityNPCInterface
 import net.minecraftforge.fml.common.eventhandler.Event as ForgeEvent
 
 /**
@@ -13,13 +17,25 @@ import net.minecraftforge.fml.common.eventhandler.Event as ForgeEvent
  *
  * @author ChloePrime
  */
-@Suppress("unused")
 fun IScriptHandler.runScript(event: Any) {
     this.runScript(ScriptParameter(event), event.javaClass)
 }
 
 fun IScriptHandler.runScript(event: ForgeEvent) {
     this.runScript(event, event.javaClass)
+}
+
+fun Entity.runScriptIfIsNpc(event: Any) {
+    if (this.world.isRemote || this !is EntityNPCInterface) return
+    this.script?.runScript(event)
+}
+
+/**
+ * Run player script.
+ */
+fun EntityPlayer.runPlayerScript(event: Any) {
+    if (this.world.isRemote) return
+    PlayerData.get(this)?.scriptData?.runScript(event)
 }
 
 /**
