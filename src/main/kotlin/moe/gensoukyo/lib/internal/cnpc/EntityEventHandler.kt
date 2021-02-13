@@ -2,6 +2,7 @@ package moe.gensoukyo.lib.internal.cnpc
 
 import moe.gensoukyo.lib.MCGLib
 import moe.gensoukyo.lib.constants.ModIds
+import moe.gensoukyo.lib.scripting.runScript
 import moe.gensoukyo.lib.server.bukkit
 import moe.gensoukyo.lib.util.cnpc.npcApi
 import net.minecraft.entity.player.EntityPlayer
@@ -20,6 +21,7 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent as FMLPlayerEvent
  * 建议拿到 MC 的 Entity 后使用 [bukkit] 扩展属性而不是 [npcApi].
  *
  * @see ForgeEventHandler
+ * @author ChloePrime
  */
 @Mod.EventBusSubscriber(modid = MCGLib.MODID)
 object EntityEventHandler {
@@ -52,7 +54,7 @@ object EntityEventHandler {
 
         if (player.world.isRemote) return
         try {
-            PlayerData.get(player).scriptData?.runForgeScript(event)
+            PlayerData.get(player).scriptData?.runScript(event)
         } catch (e: Exception) {
             MCGLib.getLogger().info("Bad event type: ${event.javaClass.canonicalName}")
             MCGLib.getLogger().debug("Stacktrace:", e)
@@ -62,6 +64,6 @@ object EntityEventHandler {
 
     private fun runNpcEvent(npc: EntityNPCInterface, event: Event) {
         if (npc.world.isRemote) return
-        npc.script?.runForgeScript(event)
+        npc.script?.runScript(event)
     }
 }

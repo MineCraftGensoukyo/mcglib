@@ -11,19 +11,26 @@ import noppes.npcs.constants.EnumScriptType
  * Used by forge events
  * and bukkit events
  */
-class HookPool(
-    private val upperBound: Class<*>
-): ClassValue<Array<EnumScriptType>>() {
+object HookPool: ClassValue<Array<EnumScriptType>>() {
+    private val upperBound = Object::class.java
 
     override fun computeValue(type: Class<*>): Array<EnumScriptType> {
         val myEnum = getEnum(type) ?: return arrayOf()
         val superman = type.superclass
-        if (superman == null || !upperBound.isAssignableFrom(superman)) {
+        if (superman == null || !superman.isValidClass()) {
             return arrayOf()
         }
         val result = mutableListOf(myEnum)
         result.addAll(get(superman))
         return result.toTypedArray()
+    }
+
+    /**
+     * Valid classes should be a child of [Object],
+     * not [Object] itself.
+     */
+    private fun Class<*>.isValidClass(): Boolean {
+        return this != upperBound && upperBound.isAssignableFrom(this)
     }
 
     private fun getEnum(type: Class<*>): EnumScriptType? {
@@ -37,5 +44,3 @@ class HookPool(
         )
     }
 }
-
-internal val forgeEventHooks = HookPool(Event::class.java)

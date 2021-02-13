@@ -3,6 +3,7 @@ package moe.gensoukyo.lib.internal.cnpc
 import moe.gensoukyo.lib.MCGLib
 import moe.gensoukyo.lib.ModConfig
 import moe.gensoukyo.lib.constants.ModIds
+import moe.gensoukyo.lib.scripting.runScript
 import net.minecraftforge.event.entity.EntityEvent
 import net.minecraftforge.event.world.BlockEvent
 import net.minecraftforge.fml.common.FMLCommonHandler
@@ -30,6 +31,7 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent as FMLPlayerEvent
  * ---
  *
  * @see ForgeEventHandler
+ * @author ChloePrime
  */
 @Mod.EventBusSubscriber(modid = MCGLib.MODID)
 object ForgeEventHandler {
@@ -48,6 +50,6 @@ object ForgeEventHandler {
 
         if (BLACKLIST.any { clazz -> clazz.isInstance(e) }) return
 
-        ScriptController.Instance?.forgeScripts?.runForgeScript(e)
+        ScriptController.Instance?.forgeScripts?.runScript(e)
     }
 }

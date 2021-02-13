@@ -6,22 +6,9 @@ import net.minecraftforge.fml.common.eventhandler.Event
 import java.util.*
 
 /**
- * Transmitting forge (world) events to script
- * The name of the hook is renamed to lowerCamelCase with dots removed.
+ * A whitelist of classes.
  *
- * How to use: (in this example, the class is java.lang.FishEvent)
- * js:
- * ---
- * function javaLangFishEvent(e) {...}
- * ---
- *
- * kotlin:
- * ---
- * import java.lang.FishEvent
- * fun javaLangFishEvent(e: FishEvent) {...}
- * ---
- *
- * @see ForgeEventWhitelist
+ * @author ChloePrime
  */
 @Mod.EventBusSubscriber(modid = MCGLib.MODID)
 object ForgeEventWhitelist {
