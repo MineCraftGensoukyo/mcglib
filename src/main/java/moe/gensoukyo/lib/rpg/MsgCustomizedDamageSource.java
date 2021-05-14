@@ -3,7 +3,6 @@ package moe.gensoukyo.lib.rpg;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
 
 import javax.annotation.Nonnull;
 
@@ -14,9 +13,9 @@ import javax.annotation.Nonnull;
 public class MsgCustomizedDamageSource extends DamageSource {
     private final ITextComponent deathMessage;
 
-    MsgCustomizedDamageSource(String deathMsgIn) {
+    MsgCustomizedDamageSource(ITextComponent deathMsgIn) {
         super("bun");
-        deathMessage = new TextComponentTranslation(deathMsgIn);
+        deathMessage = deathMsgIn;
     }
 
     /**

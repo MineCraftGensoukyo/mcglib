@@ -4,7 +4,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -16,9 +15,9 @@ import javax.annotation.Nullable;
 public class MsgCustomizedEntityDamageSource extends EntityDamageSource {
     private final ITextComponent deathMessage;
 
-    public MsgCustomizedEntityDamageSource(@Nullable Entity damageSourceEntityIn, String deathMsgIn) {
+    public MsgCustomizedEntityDamageSource(@Nullable Entity damageSourceEntityIn, ITextComponent deathMsgIn) {
         super("bun", damageSourceEntityIn);
-        deathMessage = new TextComponentTranslation(deathMsgIn);
+        deathMessage = deathMsgIn;
     }
 
     /**

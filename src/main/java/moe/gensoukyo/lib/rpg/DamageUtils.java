@@ -4,6 +4,8 @@ import moe.gensoukyo.lib.constants.ModIds;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.Optional;
 import noppes.npcs.api.entity.IEntityLivingBase;
 
@@ -26,7 +28,7 @@ public class DamageUtils {
     public static void attackEntityWithCustomDeathMessage(
             @Nonnull EntityLivingBase victim,
             float amount,
-            String deathMsg) {
+            ITextComponent deathMsg) {
         attackEntityWithCustomDeathMessage0(victim, null, amount, deathMsg);
     }
 
@@ -41,7 +43,7 @@ public class DamageUtils {
             @Nonnull EntityLivingBase victim,
             @Nonnull EntityLivingBase damager,
             float amount,
-            @Nonnull String deathMsg
+            @Nonnull ITextComponent deathMsg
     ) {
         attackEntityWithCustomDeathMessage0(victim, damager, amount, deathMsg);
     }
@@ -50,19 +52,19 @@ public class DamageUtils {
             @Nonnull EntityLivingBase victim,
             @Nullable EntityLivingBase damager,
             float amount,
-            @Nonnull String deathMsg
+            @Nonnull ITextComponent deathMsg
     ) {
         DamageSource damageSource = causeMsgCustomizedDamage(damager, deathMsg);
         victim.attackEntityFrom(damageSource, amount);
     }
 
-    public static DamageSource causeMsgCustomizedDamage(@Nonnull String deathMsg) {
+    public static DamageSource causeMsgCustomizedDamage(@Nonnull ITextComponent deathMsg) {
         return causeMsgCustomizedDamage(null, deathMsg);
     }
 
     public static DamageSource causeMsgCustomizedDamage(
             @Nullable EntityLivingBase damager,
-            @Nonnull String deathMsg
+            @Nonnull ITextComponent deathMsg
     ) {
         return (damager != null)
                 ? new MsgCustomizedEntityDamageSource(damager, deathMsg)
@@ -82,7 +84,9 @@ public class DamageUtils {
         if (victim.world.isRemote) {
             return;
         }
-        doBunStyleTrueDamage(victim, amount, victim.getDisplayName() + "被神奇的魔法杀死了");
+        doBunStyleTrueDamage(victim, amount,
+                victim.getDisplayName().appendText("被神奇的魔法杀死了")
+        );
     }
 
     /**
@@ -94,7 +98,7 @@ public class DamageUtils {
      * @param amount   伤害量
      * @param deathMsg 自定义死亡消息
      */
-    public static void doBunStyleTrueDamage(EntityLivingBase victim, float amount, String deathMsg) {
+    public static void doBunStyleTrueDamage(EntityLivingBase victim, float amount, ITextComponent deathMsg) {
         if (victim.world.isRemote) {
             return;
         }
@@ -112,7 +116,7 @@ public class DamageUtils {
         }
     }
 
-    private static DamageSource causeFinalHitDamage(String msg) {
+    private static DamageSource causeFinalHitDamage(ITextComponent msg) {
         return new MsgCustomizedDamageSource(msg).setDamageBypassesArmor();
     }
 
@@ -123,7 +127,10 @@ public class DamageUtils {
             @Nonnull IEntityLivingBase<?> victim,
             float amount,
             String deathMsg) {
-        attackEntityWithCustomDeathMessage0(victim.getMCEntity(), null, amount, deathMsg);
+        attackEntityWithCustomDeathMessage0(
+                victim.getMCEntity(), null, amount,
+                new TextComponentString(deathMsg)
+        );
     }
 
     @Optional.Method(modid = ModIds.CNPC)
@@ -135,7 +142,7 @@ public class DamageUtils {
     ) {
         attackEntityWithCustomDeathMessage0(
                 victim.getMCEntity(), damager.getMCEntity(),
-                amount, deathMsg
+                amount, new TextComponentString(deathMsg)
         );
     }
 
@@ -146,6 +153,6 @@ public class DamageUtils {
 
     @Optional.Method(modid = ModIds.CNPC)
     public static void doBunStyleTrueDamage(IEntityLivingBase<?> victim, float amount, String deathMsg) {
-        doBunStyleTrueDamage(victim.getMCEntity(), amount, deathMsg);
+        doBunStyleTrueDamage(victim.getMCEntity(), amount, new TextComponentString(deathMsg));
     }
 }

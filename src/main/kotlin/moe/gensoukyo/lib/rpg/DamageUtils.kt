@@ -15,7 +15,7 @@ import noppes.npcs.api.entity.IEntityLivingBase
 
 @Optional.Method(modid = ModIds.CNPC)
 fun <T: EntityLivingBase> IEntityLivingBase<T>.damage(amount: Float, deathMsg: String)
-    = DamageUtils.attackEntityWithCustomDeathMessage(this.mcEntity, amount, deathMsg)
+    = DamageUtils.attackEntityWithCustomDeathMessage(this, amount, deathMsg)
 
 @Optional.Method(modid = ModIds.CNPC)
 fun <T: EntityLivingBase> IEntityLivingBase<T>.damage(
@@ -23,15 +23,15 @@ fun <T: EntityLivingBase> IEntityLivingBase<T>.damage(
     amount: Float,
     deathMsg: String
 ) {
-    DamageUtils.attackEntityWithCustomDeathMessage(this.mcEntity, damager.mcEntity, amount, deathMsg)
+    DamageUtils.attackEntityWithCustomDeathMessage(this, damager, amount, deathMsg)
 }
 
 @Optional.Method(modid = ModIds.CNPC)
 fun <T: EntityLivingBase> IEntityLivingBase<T>.bunStyleTrueDamage(amount: Float) {
-    DamageUtils.doBunStyleTrueDamage(this.mcEntity, amount)
+    DamageUtils.doBunStyleTrueDamage(this, amount)
 }
 
 @Optional.Method(modid = ModIds.CNPC)
 fun <T: EntityLivingBase> IEntityLivingBase<T>.bunStyleTrueDamage(amount: Float, deathMsg: String) {
-    DamageUtils.doBunStyleTrueDamage(this.mcEntity, amount, deathMsg)
+    DamageUtils.doBunStyleTrueDamage(this, amount, deathMsg)
 }
