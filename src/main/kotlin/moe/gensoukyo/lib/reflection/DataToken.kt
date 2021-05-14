@@ -17,8 +17,10 @@ fun <T> IData.put(key: DataToken<T>, value: T) {
     key.put(this, value)
 }
 
+operator fun <T> IData.set(key: DataToken<T>, value: T) = this.put(key, value)
+
 @Optional.Method(modid = ModIds.CNPC)
-fun <T> IData.get(key: DataToken<T>): T {
+operator fun <T> IData.get(key: DataToken<T>): T {
     return key.get(this)
 }
 
@@ -38,7 +40,9 @@ fun <T> Map<String, Any>.put(key: DataToken<T>, value: T) {
     key.put(this, value)
 }
 
-fun <T> Map<String, Any>.get(key: DataToken<T>): T {
+operator fun <T> Map<String, Any>.set(key: DataToken<T>, value: T) = this.put(key, value)
+
+operator fun <T> Map<String, Any>.get(key: DataToken<T>): T {
     return key.get(this)
 }
 
