@@ -2,11 +2,14 @@ package moe.gensoukyo.lib.timer;
 
 import com.google.common.base.Preconditions;
 import moe.gensoukyo.lib.MCGLib;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import java.lang.ref.WeakReference;
@@ -27,6 +30,7 @@ public class Task implements ITask {
 
     private static final List<WeakReference<Task>> AUTO_UPDATE_SERVER = new LinkedList<>();
     private static final List<WeakReference<Task>> AUTO_UPDATE_CLIENT = new LinkedList<>();
+    private static final Logger LOGGER = LogManager.getLogger("MCGLib Tasks");
 
     private static List<WeakReference<Task>> getInstancesForSide(Side side) {
         return side == Side.CLIENT ? AUTO_UPDATE_CLIENT : AUTO_UPDATE_SERVER;
@@ -158,13 +162,27 @@ public class Task implements ITask {
         }
 
         private void nextLoop() {
-            this.callback.accept(this);
+            runCallback();
             if (this.count == 0) {
                 return;
             }
             this.curCountdown = this.initialCountdown;
             if (this.count > 0) {
                 --this.count;
+            }
+        }
+
+        /**
+         * 执行回调，如果遇到报错，则输出到日志。
+         */
+        private void runCallback() {
+            try {
+                this.callback.accept(this);
+            } catch (OutOfMemoryError e) {
+                throw e;
+            } catch (Throwable e) {
+                LOGGER.error("A task generated an exception", e);
+                stop();
             }
         }
 
