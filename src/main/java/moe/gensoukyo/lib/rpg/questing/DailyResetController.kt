@@ -4,6 +4,7 @@ import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import moe.gensoukyo.lib.rpg.questing.DailyResetController.Companion.get
 import org.apache.commons.io.FileUtils
 import org.apache.logging.log4j.LogManager
 import java.io.File
@@ -66,6 +67,24 @@ class DailyResetController private constructor(
     }
 
     /**
+     * Add / Edit
+     * @see [get]
+     */
+    fun set(user: String) {
+        lastSuccessInvokeTimeOfUser[user] = System.currentTimeMillis()
+        save()
+    }
+
+    /**
+     * Delete
+     */
+    fun reset(user: String) {
+        lastSuccessInvokeTimeOfUser.remove(user)
+        save()
+    }
+
+    /**
+     * Query
      * Gets whether the player has passed one day
      *
      * After giving daily bonus, invoke [set] method to record it,
@@ -78,11 +97,14 @@ class DailyResetController private constructor(
         return t <= TimeComputer.getLastResetTime()
     }
 
-    /**
-     * @see [get]
-     */
-    fun set(user: String) {
-        lastSuccessInvokeTimeOfUser[user] = System.currentTimeMillis()
+    fun clear() {
+        lastSuccessInvokeTimeOfUser.clear()
+        if (file.exists()) {
+            file.delete()
+        }
+    }
+
+    private fun save() {
         GlobalScope.launch {
             try {
                 file.bufferedWriter(Charsets.UTF_8).use {
