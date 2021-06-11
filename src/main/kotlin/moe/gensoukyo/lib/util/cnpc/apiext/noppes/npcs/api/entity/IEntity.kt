@@ -9,6 +9,16 @@ import java.util.*
 import javax.vecmath.Vector3d
 
 /**
+ * 无敌时间
+ */
+var <T: Entity> IEntity<T>.invulnerableTime: Int
+    @Optional.Method(modid = ModIds.CNPC)
+    get() = this.mcEntity.hurtResistantTime
+    @Optional.Method(modid = ModIds.CNPC)
+    set(value) {
+        this.mcEntity.hurtResistantTime = value
+    }
+/**
  * uuid对象
  */
 val <T: Entity> IEntity<T>.uuidObject: UUID
