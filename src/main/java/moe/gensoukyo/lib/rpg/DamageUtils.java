@@ -11,6 +11,7 @@ import noppes.npcs.api.entity.IEntityLivingBase;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.function.Supplier;
 
 /**
  * @author ChloePrime
@@ -21,6 +22,7 @@ public class DamageUtils {
 
     /**
      * 造成伤害并自定义死亡消息
+     *
      * @param victim   受到伤害的实体，被攻击者
      * @param amount   伤害量
      * @param deathMsg 自定义的死亡信息
@@ -28,12 +30,21 @@ public class DamageUtils {
     public static void attackEntityWithCustomDeathMessage(
             @Nonnull EntityLivingBase victim,
             float amount,
-            ITextComponent deathMsg) {
+            Supplier<ITextComponent> deathMsg) {
         attackEntityWithCustomDeathMessage0(victim, null, amount, deathMsg);
+    }
+
+    @Deprecated
+    public static void attackEntityWithCustomDeathMessage(
+            @Nonnull EntityLivingBase victim,
+            float amount,
+            ITextComponent deathMsg) {
+        attackEntityWithCustomDeathMessage(victim, amount, () -> deathMsg);
     }
 
     /**
      * 造成伤害并自定义死亡消息
+     *
      * @param victim   受到伤害的实体，被攻击者
      * @param damager  造成伤害的实体，攻击者
      * @param amount   伤害量
@@ -43,32 +54,75 @@ public class DamageUtils {
             @Nonnull EntityLivingBase victim,
             @Nonnull EntityLivingBase damager,
             float amount,
-            @Nonnull ITextComponent deathMsg
+            @Nonnull Supplier<ITextComponent> deathMsg
     ) {
         attackEntityWithCustomDeathMessage0(victim, damager, amount, deathMsg);
     }
 
+    @Deprecated
+    public static void attackEntityWithCustomDeathMessage(
+            @Nonnull EntityLivingBase victim,
+            @Nonnull EntityLivingBase damager,
+            float amount,
+            @Nonnull ITextComponent deathMsg
+    ) {
+        attackEntityWithCustomDeathMessage(victim, damager, amount, () -> deathMsg);
+    }
+
+    /**
+     * Internal Method
+     */
     private static void attackEntityWithCustomDeathMessage0(
             @Nonnull EntityLivingBase victim,
             @Nullable EntityLivingBase damager,
             float amount,
-            @Nonnull ITextComponent deathMsg
+            @Nonnull Supplier<ITextComponent> deathMsg
     ) {
         DamageSource damageSource = causeMsgCustomizedDamage(damager, deathMsg);
         victim.attackEntityFrom(damageSource, amount);
     }
 
-    public static DamageSource causeMsgCustomizedDamage(@Nonnull ITextComponent deathMsg) {
+    /**
+     * Create a damage source
+     * with customized death message.
+     *
+     * @param deathMsg Death Message(Lazy Computed)
+     * @return DamageSource with death msg
+     */
+    public static DamageSource causeMsgCustomizedDamage(
+            @Nonnull Supplier<ITextComponent> deathMsg
+    ) {
         return causeMsgCustomizedDamage(null, deathMsg);
     }
 
+    @Deprecated
+    public static DamageSource causeMsgCustomizedDamage(@Nonnull ITextComponent deathMsg) {
+        return causeMsgCustomizedDamage(() -> deathMsg);
+    }
+
+    /**
+     * Create a damage source
+     * with customized death message.
+     *
+     * @param damager the attacker
+     * @param deathMsg Death Message(Lazy Computed)
+     * @return DamageSource with death msg
+     */
     public static DamageSource causeMsgCustomizedDamage(
             @Nullable EntityLivingBase damager,
-            @Nonnull ITextComponent deathMsg
+            @Nonnull Supplier<ITextComponent> deathMsg
     ) {
         return (damager != null)
                 ? new MsgCustomizedEntityDamageSource(damager, deathMsg)
                 : new MsgCustomizedDamageSource(deathMsg);
+    }
+
+    @Deprecated
+    public static DamageSource causeMsgCustomizedDamage(
+            @Nullable EntityLivingBase damager,
+            @Nonnull ITextComponent deathMsg
+    ) {
+        return causeMsgCustomizedDamage(damager, () -> deathMsg);
     }
 
 
@@ -85,7 +139,7 @@ public class DamageUtils {
             return;
         }
         doBunStyleTrueDamage(victim, amount,
-                victim.getDisplayName().appendText("被神奇的魔法杀死了")
+                () -> victim.getDisplayName().appendText("被神奇的魔法杀死了")
         );
     }
 
@@ -98,7 +152,9 @@ public class DamageUtils {
      * @param amount   伤害量
      * @param deathMsg 自定义死亡消息
      */
-    public static void doBunStyleTrueDamage(EntityLivingBase victim, float amount, ITextComponent deathMsg) {
+    public static void doBunStyleTrueDamage(
+            EntityLivingBase victim, float amount, Supplier<ITextComponent> deathMsg
+    ) {
         if (victim.world.isRemote) {
             return;
         }
@@ -116,7 +172,14 @@ public class DamageUtils {
         }
     }
 
-    private static DamageSource causeFinalHitDamage(ITextComponent msg) {
+    @Deprecated
+    public static void doBunStyleTrueDamage(
+            EntityLivingBase victim, float amount, ITextComponent deathMsg
+    ) {
+        doBunStyleTrueDamage(victim, amount, () -> deathMsg);
+    }
+
+    private static DamageSource causeFinalHitDamage(Supplier<ITextComponent> msg) {
         return new MsgCustomizedDamageSource(msg).setDamageBypassesArmor();
     }
 
@@ -126,10 +189,10 @@ public class DamageUtils {
     public static void attackEntityWithCustomDeathMessage(
             @Nonnull IEntityLivingBase<?> victim,
             float amount,
-            String deathMsg) {
+            Supplier<String> deathMsg) {
         attackEntityWithCustomDeathMessage0(
                 victim.getMCEntity(), null, amount,
-                new TextComponentString(deathMsg)
+                () -> new TextComponentString(deathMsg.get())
         );
     }
 
@@ -138,11 +201,11 @@ public class DamageUtils {
             @Nonnull IEntityLivingBase<?> victim,
             @Nonnull IEntityLivingBase<?> damager,
             float amount,
-            @Nonnull String deathMsg
+            @Nonnull Supplier<String> deathMsg
     ) {
         attackEntityWithCustomDeathMessage0(
                 victim.getMCEntity(), damager.getMCEntity(),
-                amount, new TextComponentString(deathMsg)
+                amount, () -> new TextComponentString(deathMsg.get())
         );
     }
 
@@ -152,7 +215,45 @@ public class DamageUtils {
     }
 
     @Optional.Method(modid = ModIds.CNPC)
-    public static void doBunStyleTrueDamage(IEntityLivingBase<?> victim, float amount, String deathMsg) {
-        doBunStyleTrueDamage(victim.getMCEntity(), amount, new TextComponentString(deathMsg));
+    public static void doBunStyleTrueDamage(
+            IEntityLivingBase<?> victim, float amount, Supplier<String> deathMsg
+    ) {
+        doBunStyleTrueDamage(
+                victim.getMCEntity(), amount,
+                ()->new TextComponentString(deathMsg.get())
+        );
+    }
+
+    // CNPC支持（旧版）
+
+    @Deprecated
+    @Optional.Method(modid = ModIds.CNPC)
+    public static void attackEntityWithCustomDeathMessage(
+            @Nonnull IEntityLivingBase<?> victim,
+            float amount,
+            String deathMsg
+    ) {
+        attackEntityWithCustomDeathMessage(victim, amount, ()-> deathMsg);
+    }
+
+    @Deprecated
+    @Optional.Method(modid = ModIds.CNPC)
+    public static void attackEntityWithCustomDeathMessage(
+            @Nonnull IEntityLivingBase<?> victim,
+            @Nonnull IEntityLivingBase<?> damager,
+            float amount,
+            @Nonnull String deathMsg
+    ) {
+        attackEntityWithCustomDeathMessage(
+                victim, damager, amount, ()->deathMsg
+        );
+    }
+
+    @Deprecated
+    @Optional.Method(modid = ModIds.CNPC)
+    public static void doBunStyleTrueDamage(
+            IEntityLivingBase<?> victim, float amount, String deathMsg
+    ) {
+        doBunStyleTrueDamage(victim, amount, () -> deathMsg);
     }
 }

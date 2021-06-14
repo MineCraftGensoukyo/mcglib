@@ -1,5 +1,6 @@
 package moe.gensoukyo.lib.rpg;
 
+import com.google.common.base.Preconditions;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.EntityDamageSource;
@@ -7,17 +8,26 @@ import net.minecraft.util.text.ITextComponent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.function.Supplier;
 
 /**
  * 伤害信息可自定义的EntityDamageSource
+ *
  * @author ChloePrime
  */
-public class MsgCustomizedEntityDamageSource extends EntityDamageSource {
-    private final ITextComponent deathMessage;
+class MsgCustomizedEntityDamageSource extends EntityDamageSource {
+    @Nullable
+    private ITextComponent deathMessage = null;
+    private Supplier<ITextComponent> lazyDeathMessage;
 
-    public MsgCustomizedEntityDamageSource(@Nullable Entity damageSourceEntityIn, ITextComponent deathMsgIn) {
+    public MsgCustomizedEntityDamageSource(
+            @Nullable Entity damageSourceEntityIn,
+            @Nonnull Supplier<ITextComponent> deathMsgIn
+    ) {
         super("bun", damageSourceEntityIn);
-        deathMessage = deathMsgIn;
+
+        Preconditions.checkNotNull(deathMsgIn);
+        lazyDeathMessage = deathMsgIn;
     }
 
     /**
@@ -26,6 +36,10 @@ public class MsgCustomizedEntityDamageSource extends EntityDamageSource {
     @Nonnull
     @Override
     public ITextComponent getDeathMessage(@Nonnull EntityLivingBase entityLivingBaseIn) {
+        if (deathMessage == null) {
+            deathMessage = lazyDeathMessage.get();
+            lazyDeathMessage = null;
+        }
         return deathMessage;
     }
 }

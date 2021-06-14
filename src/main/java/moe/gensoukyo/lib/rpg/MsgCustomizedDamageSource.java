@@ -5,17 +5,22 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.ITextComponent;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.function.Supplier;
 
 /**
  * 伤害信息可自定义的DamageSource
+ *
  * @author ChloePrime
  */
-public class MsgCustomizedDamageSource extends DamageSource {
-    private final ITextComponent deathMessage;
+class MsgCustomizedDamageSource extends DamageSource {
+    @Nullable
+    private ITextComponent deathMessage = null;
+    private Supplier<ITextComponent> lazyDeathMessage;
 
-    MsgCustomizedDamageSource(ITextComponent deathMsgIn) {
+    MsgCustomizedDamageSource(Supplier<ITextComponent> deathMsgIn) {
         super("bun");
-        deathMessage = deathMsgIn;
+        lazyDeathMessage = deathMsgIn;
     }
 
     /**
@@ -24,6 +29,10 @@ public class MsgCustomizedDamageSource extends DamageSource {
     @Nonnull
     @Override
     public ITextComponent getDeathMessage(@Nonnull EntityLivingBase entityLivingBaseIn) {
+        if (deathMessage == null) {
+            deathMessage = lazyDeathMessage.get();
+            lazyDeathMessage = null;
+        }
         return deathMessage;
     }
 }
