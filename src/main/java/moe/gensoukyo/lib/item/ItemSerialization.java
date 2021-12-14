@@ -25,7 +25,6 @@ import java.util.Map;
  *
  * @author ChloePrime
  */
-@Beta
 public class ItemSerialization {
     private static final Map<String, ItemStack> CACHE = new HashMap<>();
     private static final ItemStack ERROR = new ItemStack(
