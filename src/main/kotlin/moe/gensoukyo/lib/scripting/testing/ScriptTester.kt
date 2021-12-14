@@ -1,9 +1,27 @@
-package moe.gensoukyo.lib.scripting.testing;
+package moe.gensoukyo.lib.scripting.testing
 
 import noppes.npcs.api.entity.IPlayer
 import java.lang.reflect.Method
 
+/**
+ * ↓ Test注解
+ * 给脚本类的无参数公开方法打上
+ */
 annotation class Test
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 private class TestInfo(
     val methods: Array<Method>,

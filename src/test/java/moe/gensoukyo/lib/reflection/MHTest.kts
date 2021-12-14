@@ -1,5 +1,6 @@
 package moe.gensoukyo.lib.reflection
 
+/*
 import moe.gensoukyo.kotlin.pool.KotlinPool
 import noppes.npcs.api.event.BlockEvent
 import java.io.PrintWriter
@@ -17,3 +18,4 @@ fun interact(e: BlockEvent.InteractEvent) {
         e.block.world.broadcast(sw.toString())
     }
 }
+*/
