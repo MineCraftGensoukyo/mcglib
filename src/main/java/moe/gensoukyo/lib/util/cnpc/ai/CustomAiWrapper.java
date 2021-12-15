@@ -4,6 +4,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.EntityAIBase;
 import noppes.npcs.entity.EntityNPCInterface;
 
+import java.util.Objects;
+
 /**
  * EntityAIBase that wraps a scriptable AI.
  *
@@ -25,7 +27,7 @@ final class CustomAiWrapper extends EntityAIBase {
     final NpcAiBase delegate;
 
     CustomAiWrapper(NpcAiBase delegate) {
-        this.delegate = delegate;
+        this.delegate = Objects.requireNonNull(delegate);
     }
 
     /**

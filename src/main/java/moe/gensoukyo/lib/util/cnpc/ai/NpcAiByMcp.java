@@ -2,6 +2,8 @@ package moe.gensoukyo.lib.util.cnpc.ai;
 
 import net.minecraft.entity.ai.EntityAIBase;
 
+import java.util.Objects;
+
 /**
  * @author ChloePrime
  */
@@ -17,7 +19,7 @@ public final class NpcAiByMcp extends NpcAiBase {
     private final EntityAIBase mcp;
 
     private NpcAiByMcp(EntityAIBase mcp) {
-        this.mcp = mcp;
+        this.mcp = Objects.requireNonNull(mcp);
     }
 
     @Override

@@ -6,16 +6,24 @@ import noppes.npcs.ai.EntityAIAttackTarget;
 import noppes.npcs.api.entity.ICustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
 
+import java.util.Objects;
+
 /**
  * @author ChloePrime
  */
 public final class CustomNpcMeleeAiWrapper extends EntityAIAttackTarget {
     private final EntityAIBase delegate;
+    private int mutexTemp = 0;
+    private boolean mutexChangedInCtor = false;
 
     public
     CustomNpcMeleeAiWrapper(EntityAIBase delegate, EntityNPCInterface npc) {
         super(npc);
-        this.delegate = delegate;
+        this.delegate = Objects.requireNonNull(delegate);
+
+        if (mutexChangedInCtor) {
+            delegate.setMutexBits(mutexTemp);
+        }
     }
 
     public <E extends EntityCreature>
@@ -55,7 +63,12 @@ public final class CustomNpcMeleeAiWrapper extends EntityAIAttackTarget {
 
     @Override
     public void setMutexBits(int mutexBitsIn) {
-        delegate.setMutexBits(mutexBitsIn);
+        if (delegate != null) {
+            delegate.setMutexBits(mutexBitsIn);
+            return;
+        }
+        mutexTemp = mutexBitsIn;
+        mutexChangedInCtor = true;
     }
 
     @Override

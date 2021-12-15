@@ -6,16 +6,24 @@ import net.minecraft.entity.ai.EntityAIBase;
 import noppes.npcs.ai.EntityAIRangedAttack;
 import noppes.npcs.api.entity.ICustomNpc;
 
+import java.util.Objects;
+
 /**
  * @author ChloePrime
  */
 public final class CustomNpcRangedAiWrapper extends EntityAIRangedAttack {
     private final EntityAIBase delegate;
+    private int mutexTemp = 0;
+    private boolean mutexChangedInCtor = false;
 
     public
     CustomNpcRangedAiWrapper(EntityAIBase delegate, IRangedAttackMob mob) {
         super(mob);
-        this.delegate = delegate;
+        this.delegate = Objects.requireNonNull(delegate);
+
+        if (mutexChangedInCtor) {
+            delegate.setMutexBits(mutexTemp);
+        }
     }
 
     public <E extends EntityCreature>
@@ -55,7 +63,12 @@ public final class CustomNpcRangedAiWrapper extends EntityAIRangedAttack {
 
     @Override
     public void setMutexBits(int mutexBitsIn) {
-        delegate.setMutexBits(mutexBitsIn);
+        if (delegate != null) {
+            delegate.setMutexBits(mutexBitsIn);
+            return;
+        }
+        mutexTemp = mutexBitsIn;
+        mutexChangedInCtor = true;
     }
 
     @Override
