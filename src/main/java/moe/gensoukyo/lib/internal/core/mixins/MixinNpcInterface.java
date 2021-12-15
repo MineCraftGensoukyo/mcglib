@@ -36,8 +36,8 @@ public abstract class MixinNpcInterface
         extends EntityCreature
         implements CnpcAiAccessor, CnpcAiBuilder {
 
-    @Shadow
-    private int taskCount;
+    @Shadow private int taskCount;
+    @Shadow public boolean updateAI;
 
     private @Nullable Consumer<CnpcAiBuilder> all2;
     private @Nullable Consumer<CnpcAiBuilder> regular;
@@ -147,31 +147,37 @@ public abstract class MixinNpcInterface
     @Override
     public void overrideAllAiCompletely(@Nullable Consumer<CnpcAiBuilder> builder) {
         all2 = builder;
+        updateAI = true;
     }
 
     @Override
     public void overrideRegularAi(@Nullable Consumer<CnpcAiBuilder> builder) {
         regular = builder;
+        updateAI = true;
     }
 
     @Override
     public void overrideDoorInteractionAi(@Nullable Consumer<CnpcAiBuilder> builder) {
         door = builder;
+        updateAI = true;
     }
 
     @Override
     public void overrideSeekShelterAi(@Nullable Consumer<CnpcAiBuilder> builder) {
         shelter = builder;
+        updateAI = true;
     }
 
     @Override
     public void overrideBattleAi(@Nullable Consumer<CnpcAiBuilder> builder) {
         battle = builder;
+        updateAI = true;
     }
 
     @Override
     public void overrideMoveAi(@Nullable Consumer<CnpcAiBuilder> builder) {
         move = builder;
+        updateAI = true;
     }
 
     @Override
