@@ -1,22 +1,31 @@
 buildscript {
     repositories {
         maven { url = 'https://maven.minecraftforge.net/' }
+        maven { url = "https://repo.spongepowered.org/maven" }
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath 'net.minecraftforge.gradle:ForgeGradle:5.1.+'
+        classpath "org.spongepowered:mixingradle:0.7.+"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_plugin_version"
     }
 }
+
+plugins {
+    id 'com.github.johnrengelman.shadow' version '5.+'
+    id 'java'
+}
+
 apply plugin: 'net.minecraftforge.gradle'
-apply plugin: "kotlin"
-apply plugin: 'eclipse'
+apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'kotlin'
 apply plugin: 'idea'
+apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = mod_version
+version = modVersion
 group = "moe.gensoukyo.lib" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "MCGLib"
+archivesBaseName = modFileName
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
@@ -26,7 +35,7 @@ compileKotlin {
 }
 
 minecraft {
-    mappings channel: 'snapshot', version: '20171003-1.12'
+    mappings channel: 'stable', version: '39-1.12'
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 
     // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
@@ -42,6 +51,8 @@ minecraft {
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
+
+            property 'fml.coreMods.load', 'moe.gensoukyo.lib.internal.core.MixinBootstrapPlugin'
         }
 
         server {
@@ -51,20 +62,26 @@ minecraft {
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
+
+            property 'fml.coreMods.load', 'moe.gensoukyo.lib.internal.core.MixinBootstrapPlugin'
         }
     }
 }
 
+mixin {
+    add sourceSets.main, "mixins.${modid}.refmap.json"
+    config "mixins.${modid}.json"
+
+    debug.verbose = true
+    debug.export = true
+    dumpTargetOnFailure = true
+}
+
 repositories {
-    flatDir {
-        dir 'lib'
-    }
-    maven {
-        url = "https://hub.spigotmc.org/nexus/content/repositories/public/"
-    }
-    maven {
-        url "https://maven.shadowfacts.net/"
-    }
+    flatDir { dir 'lib' }
+    maven { url = "https://repo.spongepowered.org/maven" }
+    maven { url = "https://maven.shadowfacts.net/" }
+    maven { url = "https://hub.spigotmc.org/nexus/content/repositories/public/" }
     mavenCentral()
 }
 
@@ -74,9 +91,17 @@ dependencies {
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
 
-    compile group: "noppes.npcs", name:"CustomNPCs_1.12.2", version: "(05Jul20)-deobf"
+    implementation fileTree(dir: 'lib', includes: ['*.jar'])
 
-    runtimeOnly group: "net.shadowfacts", name: "Forgelin", version: "1.8.3"
+    // Mixin
+    implementation("org.spongepowered:mixin:${mixinVersion}") {
+        exclude module: 'guava'
+        exclude module: 'commons-io'
+        exclude module: 'gson'
+    }
+    annotationProcessor "org.spongepowered:mixin:${mixinVersion}:processor"
+
+    compileOnly group: "net.shadowfacts", name: "Forgelin", version: "1.8.3"
     // 插件
     compile "org.bukkit:bukkit:1.12.2-R0.1-SNAPSHOT"
     // compile "org.serverct.ersha.jd:AttributePlus:2.2.9.2"
@@ -94,6 +119,7 @@ dependencies {
     testImplementation "org.jetbrains.kotlin:kotlin-script-runtime:1.3.40"
 }
 
+/*
 processResources {
     def mcversion = "1.12.2"
     // this will ensure that this task is redone when the versions change.
@@ -102,17 +128,10 @@ processResources {
 
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-
-        // replace version and mcversion
         expand 'version': project.version, 'mcversion': mcversion
     }
-
-    // copy everything else except the mcmod.info
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
-    }
 }
+*/
 
 test {
     useJUnitPlatform()
@@ -125,16 +144,36 @@ tasks.withType(JavaCompile) {
 jar {
     manifest {
         attributes([
-                "Specification-Title": "mcglib",
+                "Specification-Title": "${modid}",
                 "Specification-Vendor": "Minecraft Gensokyo",
                 "Specification-Version": "1", // We are version 1 of ourselves
                 "Implementation-Title": project.name,
                 "Implementation-Version": "${version}",
                 "Implementation-Vendor" :"Minecraft Gensokyo",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                "FMLCorePlugin": "moe.gensoukyo.lib.internal.core.MixinBootstrapPlugin",
+                "FMLCorePluginContainsFMLMod": true
         ])
     }
 }
+
+shadowJar {
+    archiveClassifier.set('')
+    dependencies {
+        include dependency("org.spongepowered:mixin:${mixinVersion}")
+    }
+    exclude('META-INF/INDEX.LIST')
+    exclude('META-INF/*.SF')
+    exclude('META-INF/*.DSA')
+    exclude('META-INF/*.RSA')
+}
+tasks.build.dependsOn shadowJar
+
+artifacts {
+    archives shadowJar
+}
+
+
 jar.finalizedBy('reobfJar')
 
 publishing {

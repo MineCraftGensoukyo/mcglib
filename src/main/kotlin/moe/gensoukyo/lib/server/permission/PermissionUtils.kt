@@ -14,7 +14,7 @@ inline fun IPlayer<*>.withOp(block: IPlayer<*>.() -> Unit) {
         block()
         return
     }
-    val playerManager = this.mcEntity.server.playerList
+    val playerManager = this.mcEntity.server?.playerList ?: return
     val profile = this.mcEntity.gameProfile
     val isOpBefore = playerManager.canSendCommands(profile)
 
@@ -31,7 +31,7 @@ inline fun IPlayer<*>.withOp(block: IPlayer<*>.() -> Unit) {
 }
 
 fun IPlayer<*>.executeCommand(cmd: String): Int {
-    return this.mcEntity.server.commandManager.executeCommand(
+    return this.mcEntity.server?.commandManager?.executeCommand(
         this.mcEntity, cmd
-    )
+    ) ?: 0
 }

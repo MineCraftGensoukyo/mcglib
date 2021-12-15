@@ -1,0 +1,7 @@
+{
+  "package": "moe.gensoukyo.lib.internal.core.mixins",
+  "refmap": "mixins.mcglib.refmap.json",
+  "mixins": [
+    "MixinNpcInterface"
+  ]
+}
