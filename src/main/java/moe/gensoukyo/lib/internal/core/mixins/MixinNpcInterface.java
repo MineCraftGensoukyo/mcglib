@@ -27,12 +27,16 @@ import java.util.function.Supplier;
  * @author ChloePrime
  * @see CnpcAiBuilder
  */
-@Mixin(value = EntityNPCInterface.class, remap = false)
+@Mixin(
+        value = EntityNPCInterface.class,
+        priority = 500,
+        remap = false
+)
 public abstract class MixinNpcInterface
         extends EntityCreature
         implements CnpcAiAccessor, CnpcAiBuilder {
 
-    @Shadow(remap = false)
+    @Shadow
     private int taskCount;
 
     private @Nullable Consumer<CnpcAiBuilder> all2;
@@ -47,8 +51,7 @@ public abstract class MixinNpcInterface
     @Inject(
             at = @At("HEAD"),
             method = "updateTasks",
-            cancellable = true,
-            remap = false
+            cancellable = true
     )
     private void injectTasks(CallbackInfo ci) {
         if (isContextInvalid()) {
@@ -60,8 +63,7 @@ public abstract class MixinNpcInterface
     @Inject(
             at = @At("HEAD"),
             method = "addRegularEntries",
-            cancellable = true,
-            remap = false
+            cancellable = true
     )
     private void injectRegularAi(CallbackInfo ci) {
         inject0(regular, ci);
@@ -70,8 +72,7 @@ public abstract class MixinNpcInterface
     @Inject(
             at = @At("HEAD"),
             method = "doorInteractType",
-            cancellable = true,
-            remap = false
+            cancellable = true
     )
     private void injectDoorInteractAi(CallbackInfo ci) {
         inject0(door, ci);
@@ -80,8 +81,7 @@ public abstract class MixinNpcInterface
     @Inject(
             at = @At("HEAD"),
             method = "seekShelter",
-            cancellable = true,
-            remap = false
+            cancellable = true
     )
     private void injectSeekShelterAi(CallbackInfo ci) {
         inject0(shelter, ci);
@@ -90,8 +90,7 @@ public abstract class MixinNpcInterface
     @Inject(
             at = @At("HEAD"),
             method = "setResponse",
-            cancellable = true,
-            remap = false
+            cancellable = true
     )
     private void injectBattleAi(CallbackInfo ci) {
         inject0(battle, ci);
@@ -100,8 +99,7 @@ public abstract class MixinNpcInterface
     @Inject(
             at = @At("HEAD"),
             method = "setMoveType",
-            cancellable = true,
-            remap = false
+            cancellable = true
     )
     private void injectMoveAi(CallbackInfo ci) {
         inject0(move, ci);
@@ -119,8 +117,7 @@ public abstract class MixinNpcInterface
      */
     @Redirect(
             method = "setResponse",
-            at = @At(value = "NEW", target = "noppes.npcs.ai.EntityAIAttackTarget", remap = false),
-            remap = false
+            at = @At(value = "NEW", target = "noppes.npcs.ai.EntityAIAttackTarget", remap = false)
     )
     private EntityAIAttackTarget redirectMeleeAiConstructor(EntityNPCInterface par1) {
         return meleeReplacement != null
@@ -133,8 +130,7 @@ public abstract class MixinNpcInterface
      */
     @Redirect(
             method = "setResponse",
-            at = @At(value = "NEW", target = "noppes.npcs.ai.EntityAIRangedAttack", remap = false),
-            remap = false
+            at = @At(value = "NEW", target = "noppes.npcs.ai.EntityAIRangedAttack", remap = false)
     )
     private EntityAIRangedAttack redirectRangedAiConstructor(IRangedAttackMob par1) {
         return rangedReplacement != null
@@ -224,7 +220,7 @@ public abstract class MixinNpcInterface
         return tc;
     }
 
-    private MixinNpcInterface(World worldIn) {
+    public MixinNpcInterface(World worldIn) {
         super(worldIn);
     }
 }
