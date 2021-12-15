@@ -6,7 +6,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIAttackRangedBow;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
 import noppes.npcs.api.entity.ICustomNpc;
 import noppes.npcs.api.entity.data.INPCRanged;
 import noppes.npcs.api.wrapper.ItemStackWrapper;
@@ -56,10 +55,10 @@ public class NpcAiSkeletonRangedAttack<N extends EntityNPCInterface> extends Ent
      */
     @Override
     public boolean shouldExecute() {
-        return this.entity.getAttackTarget() != null && this.isBowInMainhand();
+        return this.entity.getAttackTarget() != null && this.hasProjectile();
     }
 
-    protected boolean isBowInMainhand() {
+    protected boolean hasProjectile() {
         ItemStack proj = ItemStackWrapper.MCItem(this.entity.inventory.getProjectile());
         return proj != null && !proj.isEmpty();
     }
@@ -69,7 +68,7 @@ public class NpcAiSkeletonRangedAttack<N extends EntityNPCInterface> extends Ent
      */
     @Override
     public boolean shouldContinueExecuting() {
-        return (this.shouldExecute() || !this.entity.getNavigator().noPath()) && this.isBowInMainhand();
+        return (this.shouldExecute() || !this.entity.getNavigator().noPath()) && this.hasProjectile();
     }
 
     /**
@@ -90,7 +89,7 @@ public class NpcAiSkeletonRangedAttack<N extends EntityNPCInterface> extends Ent
         this.entity.setSwingingArms(false);
         this.seeTime = 0;
         this.attackTime = -1;
-        this.entity.resetActiveHand();
+        this.deactivate();
     }
 
     /**
@@ -154,12 +153,12 @@ public class NpcAiSkeletonRangedAttack<N extends EntityNPCInterface> extends Ent
             this.entity.getLookHelper().setLookPositionWithEntity(entitylivingbase, 30.0F, 30.0F);
         }
 
-        if (this.entity.isHandActive()) {
+        if (this.isActive()) {
             if (!canSee && this.seeTime < -60) {
-                this.entity.resetActiveHand();
+                this.deactivate();
             } else if (canSee) {
                 float indirect = isIndirect(distanceSq, entitylivingbase) ? 1F : 0F;
-                this.entity.resetActiveHand();
+                this.deactivate();
                 this.entity.attackEntityWithRangedAttack(entitylivingbase, indirect);
                 // ChloePrime Start:
                 // Redirect hardcoded attack CD to the attack CD from NPC's ranged stats.
@@ -167,7 +166,7 @@ public class NpcAiSkeletonRangedAttack<N extends EntityNPCInterface> extends Ent
                 this.attackTime = rangedData.getDelayRNG();
             }
         } else if (--this.attackTime <= 0 && this.seeTime >= -60) {
-            this.entity.setActiveHand(EnumHand.MAIN_HAND);
+            this.activate();
         }
     }
 
@@ -177,6 +176,10 @@ public class NpcAiSkeletonRangedAttack<N extends EntityNPCInterface> extends Ent
 
     private void activate() {
         active = true;
+    }
+
+    private boolean isActive() {
+        return active;
     }
 
     private boolean isIndirect(double distanceSq, EntityLivingBase target) {
