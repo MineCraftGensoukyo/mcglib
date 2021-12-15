@@ -5,10 +5,11 @@ import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIAttackRangedBow;
 import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.item.ItemBow;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import noppes.npcs.api.entity.ICustomNpc;
 import noppes.npcs.api.entity.data.INPCRanged;
+import noppes.npcs.api.wrapper.ItemStackWrapper;
 import noppes.npcs.entity.EntityNPCInterface;
 
 /**
@@ -24,7 +25,7 @@ public class NpcAiSkeletonRangedAttack<N extends EntityNPCInterface> extends Ent
     private final N entity;
     private final double moveSpeedAmp;
 
-    public float getMaxAttackDistance() {
+    public double getMaxAttackDistance() {
         int range = entity.stats.ranged.getRange();
         return range * range;
     }
@@ -34,6 +35,8 @@ public class NpcAiSkeletonRangedAttack<N extends EntityNPCInterface> extends Ent
     private boolean strafingClockwise;
     private boolean strafingBackwards;
     private int strafingTime = -1;
+
+    private boolean active = false;
 
     public NpcAiSkeletonRangedAttack(
             N npc, double moveSpeedAmpIn
@@ -57,7 +60,8 @@ public class NpcAiSkeletonRangedAttack<N extends EntityNPCInterface> extends Ent
     }
 
     protected boolean isBowInMainhand() {
-        return this.entity.inventory.getProjectile() != null;
+        ItemStack proj = ItemStackWrapper.MCItem(this.entity.inventory.getProjectile());
+        return proj != null && !proj.isEmpty();
     }
 
     /**
@@ -99,72 +103,90 @@ public class NpcAiSkeletonRangedAttack<N extends EntityNPCInterface> extends Ent
     public void updateTask() {
         EntityLivingBase entitylivingbase = this.entity.getAttackTarget();
 
-        if (entitylivingbase != null) {
-            double d0 = this.entity.getDistanceSq(entitylivingbase.posX, entitylivingbase.getEntityBoundingBox().minY, entitylivingbase.posZ);
-            boolean flag = this.entity.getEntitySenses().canSee(entitylivingbase);
-            boolean flag1 = this.seeTime > 0;
+        if (entitylivingbase == null) {
+            return;
+        }
 
-            if (flag != flag1) {
-                this.seeTime = 0;
+        double distanceSq = this.entity.getDistanceSq(entitylivingbase.posX, entitylivingbase.getEntityBoundingBox().minY, entitylivingbase.posZ);
+        boolean canSee = !this.entity.ais.directLOS || this.entity.getEntitySenses().canSee(entitylivingbase);
+        boolean flag1 = this.seeTime > 0;
+
+        if (canSee != flag1) {
+            this.seeTime = 0;
+        }
+
+        if (canSee) {
+            ++this.seeTime;
+        } else {
+            --this.seeTime;
+        }
+
+        if (distanceSq <= this.getMaxAttackDistance() && this.seeTime >= 20) {
+            this.entity.getNavigator().clearPath();
+            ++this.strafingTime;
+        } else {
+            this.entity.getNavigator().tryMoveToEntityLiving(entitylivingbase, this.moveSpeedAmp);
+            this.strafingTime = -1;
+        }
+
+        if (this.strafingTime >= 20) {
+            if ((double) this.entity.getRNG().nextFloat() < 0.3D) {
+                this.strafingClockwise = !this.strafingClockwise;
             }
 
-            if (flag) {
-                ++this.seeTime;
-            } else {
-                --this.seeTime;
+            if ((double) this.entity.getRNG().nextFloat() < 0.3D) {
+                this.strafingBackwards = !this.strafingBackwards;
             }
 
-            if (d0 <= (double) this.getMaxAttackDistance() && this.seeTime >= 20) {
-                this.entity.getNavigator().clearPath();
-                ++this.strafingTime;
-            } else {
-                this.entity.getNavigator().tryMoveToEntityLiving(entitylivingbase, this.moveSpeedAmp);
-                this.strafingTime = -1;
+            this.strafingTime = 0;
+        }
+
+        if (this.strafingTime > -1) {
+            if (distanceSq > (this.getMaxAttackDistance() * 0.75F)) {
+                this.strafingBackwards = false;
+            } else if (distanceSq < (this.getMaxAttackDistance() * 0.25F)) {
+                this.strafingBackwards = true;
             }
 
-            if (this.strafingTime >= 20) {
-                if ((double) this.entity.getRNG().nextFloat() < 0.3D) {
-                    this.strafingClockwise = !this.strafingClockwise;
-                }
+            this.entity.getMoveHelper().strafe(this.strafingBackwards ? -0.5F : 0.5F, this.strafingClockwise ? 0.5F : -0.5F);
+            this.entity.faceEntity(entitylivingbase, 30.0F, 30.0F);
+        } else {
+            this.entity.getLookHelper().setLookPositionWithEntity(entitylivingbase, 30.0F, 30.0F);
+        }
 
-                if ((double) this.entity.getRNG().nextFloat() < 0.3D) {
-                    this.strafingBackwards = !this.strafingBackwards;
-                }
-
-                this.strafingTime = 0;
+        if (this.entity.isHandActive()) {
+            if (!canSee && this.seeTime < -60) {
+                this.entity.resetActiveHand();
+            } else if (canSee) {
+                float indirect = isIndirect(distanceSq, entitylivingbase) ? 1F : 0F;
+                this.entity.resetActiveHand();
+                this.entity.attackEntityWithRangedAttack(entitylivingbase, indirect);
+                // ChloePrime Start:
+                // Redirect hardcoded attack CD to the attack CD from NPC's ranged stats.
+                INPCRanged rangedData = this.entity.stats.ranged;
+                this.attackTime = rangedData.getDelayRNG();
             }
+        } else if (--this.attackTime <= 0 && this.seeTime >= -60) {
+            this.entity.setActiveHand(EnumHand.MAIN_HAND);
+        }
+    }
 
-            if (this.strafingTime > -1) {
-                if (d0 > (double) (this.getMaxAttackDistance() * 0.75F)) {
-                    this.strafingBackwards = false;
-                } else if (d0 < (double) (this.getMaxAttackDistance() * 0.25F)) {
-                    this.strafingBackwards = true;
-                }
+    private void deactivate() {
+        active = false;
+    }
 
-                this.entity.getMoveHelper().strafe(this.strafingBackwards ? -0.5F : 0.5F, this.strafingClockwise ? 0.5F : -0.5F);
-                this.entity.faceEntity(entitylivingbase, 30.0F, 30.0F);
-            } else {
-                this.entity.getLookHelper().setLookPositionWithEntity(entitylivingbase, 30.0F, 30.0F);
-            }
+    private void activate() {
+        active = true;
+    }
 
-            if (this.entity.isHandActive()) {
-                if (!flag && this.seeTime < -60) {
-                    this.entity.resetActiveHand();
-                } else if (flag) {
-                    int i = this.entity.getItemInUseMaxCount();
-
-                    if (i >= 20) {
-                        this.entity.resetActiveHand();
-                        this.entity.attackEntityWithRangedAttack(entitylivingbase, ItemBow.getArrowVelocity(i));
-                        // ChloePrime Start:
-                        // Redirect hardcoded attack CD to the attack CD from NPC's ranged stats.
-                        INPCRanged rangedData = this.entity.stats.ranged;
-                        this.attackTime = rangedData.getDelayRNG();
-                    }
-                }
-            } else if (--this.attackTime <= 0 && this.seeTime >= -60) {
-                this.entity.setActiveHand(EnumHand.MAIN_HAND);
-            }
+    private boolean isIndirect(double distanceSq, EntityLivingBase target) {
+        switch (this.entity.stats.ranged.getFireType()) {
+            case 1:
+                return distanceSq > getMaxAttackDistance() / 2.0D;
+            case 2:
+                return !this.entity.getEntitySenses().canSee(target);
+            default:
+                return false;
         }
     }
 }
