@@ -2,13 +2,8 @@ package moe.gensoukyo.lib.internal.core;
 
 import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
-import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.MCVersion;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.Name;
-import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
 import org.apache.commons.lang3.reflect.MethodUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.serverct.ersha.jd.F;
 import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.Mixins;
 
@@ -16,7 +11,6 @@ import javax.annotation.Nonnull;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author ChloePrime

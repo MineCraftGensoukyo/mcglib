@@ -3,5 +3,8 @@
   "refmap": "mixins.mcglib.refmap.json",
   "mixins": [
     "MixinNpcInterface"
+  ],
+  "server": [
+    "MixinModDiscover"
   ]
 }
