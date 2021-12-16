@@ -3,7 +3,6 @@ package moe.gensoukyo.lib.util.cnpc.ai;
 import kotlin.jvm.functions.Function0;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIAttackRangedBow;
-import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.item.ItemStack;
 import noppes.npcs.api.entity.ICustomNpc;
 import noppes.npcs.api.entity.data.INPCRanged;
@@ -18,15 +17,19 @@ import noppes.npcs.entity.EntityNPCInterface;
  * @see CnpcAiKt#replaceRangedAi(ICustomNpc, Function0)
  */
 @SuppressWarnings("unused")
-public class NpcAiSkeletonRangedAttack extends EntityAIBase {
+public class NpcAiSkeletonRangedAttack extends NpcAiBase {
 
     private final EntityNPCInterface entity;
     private final double moveSpeedAmp;
+    private final double farSq;
+    private final double nearSq;
+    private final float changeTangentProbability;
+    private final float changeNormalProbability;
 
-    public double getMaxAttackDistance() {
-        int range = entity.stats.ranged.getRange();
-        return range * range;
-    }
+    public static final double VANILLA_FAR = Math.sqrt(0.75);
+    public static final double VANILLA_NEAR = 0.5;
+    public static final float VANILLA_TANGENT_SWAP_RATE = 0.3F;
+    public static final float VANILLA_NORMAL_SWAP_RATE = 0.3F;
 
     private int attackTime = -1;
     private int seeTime;
@@ -36,18 +39,41 @@ public class NpcAiSkeletonRangedAttack extends EntityAIBase {
 
     private boolean active = false;
 
-    public NpcAiSkeletonRangedAttack(EntityNPCInterface npc,
-                                     double moveSpeedAmpIn
-    ) {
-        this.entity = npc;
-        this.moveSpeedAmp = moveSpeedAmpIn;
-        this.setMutexBits(3);
-    }
-
     public NpcAiSkeletonRangedAttack(ICustomNpc<?> npc,
                                      double moveSpeedAmpIn
     ) {
         this(CustomAiWrapper.checkedCast(npc.getMCEntity()), moveSpeedAmpIn);
+    }
+
+    public NpcAiSkeletonRangedAttack(EntityNPCInterface npc,
+                                     double moveSpeedAmpIn
+    ) {
+        this(npc, moveSpeedAmpIn, VANILLA_FAR, VANILLA_NEAR, VANILLA_TANGENT_SWAP_RATE, VANILLA_NORMAL_SWAP_RATE);
+    }
+
+    private NpcAiSkeletonRangedAttack(EntityNPCInterface npc, double moveSpeedAmpIn,
+                              double far, double near,
+                              float tangentSwapRate, float normalSwapRate
+    ) {
+        this.entity = npc;
+        this.moveSpeedAmp = moveSpeedAmpIn;
+        this.farSq = far * far;
+        this.nearSq = near * near;
+        this.changeTangentProbability = tangentSwapRate;
+        this.changeNormalProbability = normalSwapRate;
+    }
+
+    public double getMaxAttackDistance() {
+        int range = entity.stats.ranged.getRange();
+        return range * range;
+    }
+
+    public double getMaxStrafeDistanceSquared() {
+        return getMaxAttackDistance() * farSq;
+    }
+
+    public double getMinStrafeDistanceSquared() {
+        return getMaxAttackDistance() * nearSq;
     }
 
     /**
@@ -55,7 +81,8 @@ public class NpcAiSkeletonRangedAttack extends EntityAIBase {
      */
     @Override
     public boolean shouldExecute() {
-        return this.entity.getAttackTarget() != null && this.hasProjectile();
+        EntityLivingBase target = this.entity.getAttackTarget();
+        return target != null && target.isEntityAlive() && this.hasProjectile();
     }
 
     protected boolean hasProjectile() {
@@ -89,6 +116,7 @@ public class NpcAiSkeletonRangedAttack extends EntityAIBase {
         this.entity.setSwingingArms(false);
         this.seeTime = 0;
         this.attackTime = -1;
+        this.strafingTime = 0;
         this.deactivate();
     }
 
@@ -129,11 +157,11 @@ public class NpcAiSkeletonRangedAttack extends EntityAIBase {
         }
 
         if (this.strafingTime >= 20) {
-            if ((double) this.entity.getRNG().nextFloat() < 0.3D) {
+            if (this.entity.getRNG().nextFloat() < changeTangentProbability) {
                 this.strafingClockwise = !this.strafingClockwise;
             }
 
-            if ((double) this.entity.getRNG().nextFloat() < 0.3D) {
+            if (this.entity.getRNG().nextFloat() < changeNormalProbability) {
                 this.strafingBackwards = !this.strafingBackwards;
             }
 
@@ -141,9 +169,9 @@ public class NpcAiSkeletonRangedAttack extends EntityAIBase {
         }
 
         if (this.strafingTime > -1) {
-            if (distanceSq > (this.getMaxAttackDistance() * 0.75F)) {
+            if (distanceSq > getMaxStrafeDistanceSquared()) {
                 this.strafingBackwards = false;
-            } else if (distanceSq < (this.getMaxAttackDistance() * 0.25F)) {
+            } else if (distanceSq < getMinStrafeDistanceSquared()) {
                 this.strafingBackwards = true;
             }
 
@@ -191,5 +219,42 @@ public class NpcAiSkeletonRangedAttack extends EntityAIBase {
             default:
                 return false;
         }
+    }
+
+    public static class Builder {
+        public NpcAiSkeletonRangedAttack create(EntityNPCInterface npc) {
+            return new NpcAiSkeletonRangedAttack(npc, moveSpeedAmp, farSq, nearSq, tanProb, normProb);
+        }
+
+        public Builder boostSpeed(double moveSpeedAmp) {
+            this.moveSpeedAmp = moveSpeedAmp;
+            return this;
+        }
+
+        public Builder maxStrafeRangeScale(double farSq) {
+            this.farSq = farSq;
+            return this;
+        }
+
+        public Builder minStrafeRangeScale(double nearSq) {
+            this.nearSq = nearSq;
+            return this;
+        }
+
+        public Builder tangentSwapProbabilityWhenStrafing(float probably) {
+            tanProb = probably;
+            return this;
+        }
+
+        public Builder normalSwapProbabilityWhenStrafing(float probably) {
+            normProb = probably;
+            return this;
+        }
+
+        private double moveSpeedAmp = 1.0;
+        private double farSq = VANILLA_FAR;
+        private double nearSq = VANILLA_NEAR;
+        private float tanProb = VANILLA_TANGENT_SWAP_RATE;
+        private float normProb = VANILLA_NORMAL_SWAP_RATE;
     }
 }
