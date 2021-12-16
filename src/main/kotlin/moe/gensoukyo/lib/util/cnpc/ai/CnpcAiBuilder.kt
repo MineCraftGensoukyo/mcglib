@@ -32,7 +32,14 @@ interface CnpcAiBuilder {
         overrideMoveAi(Consumer { })
     }
 
-    fun resetOverrides()
+    fun resetOverrides() {
+        overrideAllAiCompletely(null)
+        overrideRegularAi(null)
+        overrideDoorInteractionAi(null)
+        overrideSeekShelterAi(null)
+        overrideBattleAi(null)
+        overrideMoveAi(null)
+    }
 
     /**
      * @see EntityNPCInterface.addRegularEntries

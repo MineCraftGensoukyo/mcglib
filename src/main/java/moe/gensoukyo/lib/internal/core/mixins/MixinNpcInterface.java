@@ -138,8 +138,22 @@ public abstract class MixinNpcInterface
                 : new EntityAIRangedAttack(thisNpc());
     }
 
+    /**
+     * Is world null? or are we in client environment?
+     */
     private boolean isContextInvalid() {
         return world == null || world.isRemote;
+    }
+
+    @Inject(
+            method = "reset",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnoppes/npcs/EventHooks;onNPCInit(Lnoppes/npcs/entity/EntityNPCInterface;)V"
+            )
+    )
+    private void injectReset(CallbackInfo ci) {
+        resetOverrides();
     }
 
     // Implementations
