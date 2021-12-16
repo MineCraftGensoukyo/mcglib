@@ -41,6 +41,8 @@ public abstract class MixinNpcInterface
     @Shadow
     public boolean updateAI;
 
+    @Shadow
+    public long totalTicksAlive;
     private @Nullable
     Consumer<CnpcAiBuilder> all2;
     private @Nullable
@@ -209,6 +211,7 @@ public abstract class MixinNpcInterface
         meleeReplacement = taskConstructor == null
                 ? null
                 : () -> castMeleeAi(taskConstructor.get());
+        updateAI = true;
     }
 
     @Override
@@ -216,6 +219,7 @@ public abstract class MixinNpcInterface
         rangedReplacement = taskConstructor == null
                 ? null
                 : () -> castRangedAi(taskConstructor.get());
+        updateAI = true;
     }
 
     @Override
