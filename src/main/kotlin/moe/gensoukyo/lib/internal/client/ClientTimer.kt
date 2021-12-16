@@ -12,7 +12,7 @@ import net.minecraftforge.fml.relauncher.SideOnly
 import kotlin.math.abs
 
 @SideOnly(Side.CLIENT)
-@Mod.EventBusSubscriber(modid = MCGLib.MODID)
+@Mod.EventBusSubscriber(value = [Side.CLIENT], modid = MCGLib.MODID)
 object ClientTimer {
     internal var deltaTime: Float = 0.0f
     internal var deltaRealTime: Float = 0.0f
