@@ -208,6 +208,13 @@ public abstract class MixinNpcInterface
                 : () -> castRangedAi(taskConstructor.get());
     }
 
+    @Override
+    public void resetOverrides() {
+        CnpcAiBuilder.super.resetOverrides();
+        replaceMeleeAiTask(null);
+        replaceRangedAiTask(null);
+    }
+
     private EntityAIAttackTarget castMeleeAi(EntityAIBase ai) {
         if (ai instanceof EntityAIAttackTarget) {
             return (EntityAIAttackTarget) ai;

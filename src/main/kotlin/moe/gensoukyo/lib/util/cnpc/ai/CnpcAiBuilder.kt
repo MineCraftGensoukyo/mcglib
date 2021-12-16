@@ -24,14 +24,16 @@ interface CnpcAiBuilder {
      * Clear AI tasks
      * and replace with ourselves.
      */
+    @JvmDefault
     fun overrideAllAi(builder: Consumer<CnpcAiBuilder>) {
         overrideRegularAi(builder)
-        overrideDoorInteractionAi(Consumer { })
-        overrideSeekShelterAi(Consumer { })
-        overrideBattleAi(Consumer { })
-        overrideMoveAi(Consumer { })
+        overrideDoorInteractionAi { }
+        overrideSeekShelterAi { }
+        overrideBattleAi { }
+        overrideMoveAi { }
     }
 
+    @JvmDefault
     fun resetOverrides() {
         overrideAllAiCompletely(null)
         overrideRegularAi(null)
@@ -74,6 +76,7 @@ interface CnpcAiBuilder {
     /**
      * @return The actual task priority inside [EntityLiving.tasks]
      */
+    @JvmDefault
     fun addTask(task: EntityAIBase): Int {
         return addTask(1, task)
     }
