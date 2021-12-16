@@ -20,6 +20,9 @@ interface CnpcAiAccessor {
      */
     fun replaceRangedAiTask(taskConstructor: Supplier<EntityAIBase>?)
 
+    @JvmDefault
     fun resetMeleeAiTask() = replaceMeleeAiTask(null)
+
+    @JvmDefault
     fun resetRangedAiTask() = replaceRangedAiTask(null)
 }
