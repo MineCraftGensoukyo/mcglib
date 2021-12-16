@@ -36,6 +36,23 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     }
 }
 
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "utf8"
+}
+
+tasks.withType(Javadoc) {
+    options {
+        encoding 'UTF-8'
+        charSet 'UTF-8'
+        links 'http://docs.oracle.com/javase/8/docs/api'
+    }
+}
+
 minecraft {
     mappings channel: 'stable', version: '39-1.12'
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
@@ -138,10 +155,6 @@ processResources {
 
 test {
     useJUnitPlatform()
-}
-
-tasks.withType(JavaCompile) {
-    options.encoding = "utf8"
 }
 
 jar {
