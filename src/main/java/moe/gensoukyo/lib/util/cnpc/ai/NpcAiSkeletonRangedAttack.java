@@ -1,7 +1,6 @@
 package moe.gensoukyo.lib.util.cnpc.ai;
 
 import kotlin.jvm.functions.Function0;
-import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIAttackRangedBow;
 import net.minecraft.entity.ai.EntityAIBase;
@@ -14,14 +13,14 @@ import noppes.npcs.entity.EntityNPCInterface;
 /**
  * Vanilla skeleton's attack ai, made for npc.
  *
+ * @author Mojang, ChloePrime
  * @see EntityAIAttackRangedBow
  * @see CnpcAiKt#replaceRangedAi(ICustomNpc, Function0)
- * @author Mojang, ChloePrime
  */
 @SuppressWarnings("unused")
-public class NpcAiSkeletonRangedAttack<N extends EntityNPCInterface> extends EntityAIBase {
+public class NpcAiSkeletonRangedAttack extends EntityAIBase {
 
-    private final N entity;
+    private final EntityNPCInterface entity;
     private final double moveSpeedAmp;
 
     public double getMaxAttackDistance() {
@@ -37,17 +36,18 @@ public class NpcAiSkeletonRangedAttack<N extends EntityNPCInterface> extends Ent
 
     private boolean active = false;
 
-    public NpcAiSkeletonRangedAttack(
-            N npc, double moveSpeedAmpIn
+    public NpcAiSkeletonRangedAttack(EntityNPCInterface npc,
+                                     double moveSpeedAmpIn
     ) {
         this.entity = npc;
         this.moveSpeedAmp = moveSpeedAmpIn;
         this.setMutexBits(3);
     }
 
-    public <E extends EntityCreature>
-    NpcAiSkeletonRangedAttack(ICustomNpc<E> npc, double moveSpeedAmpIn) {
-        this(CustomAiWrapper.<N>checkedCast(npc.getMCEntity()), moveSpeedAmpIn);
+    public NpcAiSkeletonRangedAttack(ICustomNpc<?> npc,
+                                     double moveSpeedAmpIn
+    ) {
+        this(CustomAiWrapper.checkedCast(npc.getMCEntity()), moveSpeedAmpIn);
     }
 
     /**
@@ -94,7 +94,7 @@ public class NpcAiSkeletonRangedAttack<N extends EntityNPCInterface> extends Ent
 
     /**
      * Keep ticking a continuous task that has already been started
-     *
+     * <p>
      * Magic values are from Mojang :(
      */
     @Override

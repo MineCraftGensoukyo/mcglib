@@ -17,11 +17,8 @@ final class CustomAiWrapper extends EntityAIBase {
     /**
      * Helper method for casting ICustomNpc<N>'s N to EntityNpcInterface
      */
-    @SuppressWarnings("unchecked")
-    static <N extends EntityNPCInterface>
-    N checkedCast(Entity obj) {
-        EntityNPCInterface npc = (EntityNPCInterface) obj;
-        return (N) npc;
+    static EntityNPCInterface checkedCast(Entity obj) {
+        return (EntityNPCInterface) obj;
     }
 
     final NpcAiBase delegate;

@@ -36,17 +36,27 @@ public abstract class MixinNpcInterface
         extends EntityCreature
         implements CnpcAiAccessor, CnpcAiBuilder {
 
-    @Shadow private int taskCount;
-    @Shadow public boolean updateAI;
+    @Shadow
+    private int taskCount;
+    @Shadow
+    public boolean updateAI;
 
-    private @Nullable Consumer<CnpcAiBuilder> all2;
-    private @Nullable Consumer<CnpcAiBuilder> regular;
-    private @Nullable Consumer<CnpcAiBuilder> door;
-    private @Nullable Consumer<CnpcAiBuilder> shelter;
-    private @Nullable Consumer<CnpcAiBuilder> battle;
-    private @Nullable Consumer<CnpcAiBuilder> move;
-    private @Nullable Supplier<EntityAIAttackTarget> meleeReplacement;
-    private @Nullable Supplier<EntityAIRangedAttack> rangedReplacement;
+    private @Nullable
+    Consumer<CnpcAiBuilder> all2;
+    private @Nullable
+    Consumer<CnpcAiBuilder> regular;
+    private @Nullable
+    Consumer<CnpcAiBuilder> door;
+    private @Nullable
+    Consumer<CnpcAiBuilder> shelter;
+    private @Nullable
+    Consumer<CnpcAiBuilder> battle;
+    private @Nullable
+    Consumer<CnpcAiBuilder> move;
+    private @Nullable
+    Supplier<EntityAIAttackTarget> meleeReplacement;
+    private @Nullable
+    Supplier<EntityAIRangedAttack> rangedReplacement;
 
     @Inject(
             at = @At("HEAD"),
@@ -210,9 +220,9 @@ public abstract class MixinNpcInterface
 
     @Override
     public void resetOverrides() {
-        CnpcAiBuilder.super.resetOverrides();
-        replaceMeleeAiTask(null);
-        replaceRangedAiTask(null);
+        all2 = regular = door = shelter = battle = move = null;
+        meleeReplacement = null;
+        rangedReplacement = null;
     }
 
     private EntityAIAttackTarget castMeleeAi(EntityAIBase ai) {

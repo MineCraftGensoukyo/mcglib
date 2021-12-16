@@ -1,6 +1,5 @@
 package moe.gensoukyo.lib.util.cnpc.ai;
 
-import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.ai.EntityAIBase;
 import noppes.npcs.ai.EntityAIAttackTarget;
 import noppes.npcs.api.entity.ICustomNpc;
@@ -16,8 +15,9 @@ public final class CustomNpcMeleeAiWrapper extends EntityAIAttackTarget {
     private int mutexTemp = 0;
     private boolean mutexChangedInCtor = false;
 
-    public
-    CustomNpcMeleeAiWrapper(EntityAIBase delegate, EntityNPCInterface npc) {
+    public CustomNpcMeleeAiWrapper(EntityAIBase delegate,
+                                   EntityNPCInterface npc
+    ) {
         super(npc);
         this.delegate = Objects.requireNonNull(delegate);
 
@@ -26,8 +26,9 @@ public final class CustomNpcMeleeAiWrapper extends EntityAIAttackTarget {
         }
     }
 
-    public <E extends EntityCreature>
-    CustomNpcMeleeAiWrapper(NpcAiBase delegate, ICustomNpc<E> npc) {
+    public CustomNpcMeleeAiWrapper(NpcAiBase delegate,
+                                   ICustomNpc<?> npc
+    ) {
         this(delegate.getMcAi(), CustomAiWrapper.checkedCast(npc.getMCEntity()));
     }
 

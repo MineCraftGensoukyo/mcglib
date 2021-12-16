@@ -16,8 +16,9 @@ public final class CustomNpcRangedAiWrapper extends EntityAIRangedAttack {
     private int mutexTemp = 0;
     private boolean mutexChangedInCtor = false;
 
-    public
-    CustomNpcRangedAiWrapper(EntityAIBase delegate, IRangedAttackMob mob) {
+    public CustomNpcRangedAiWrapper(EntityAIBase delegate,
+                                    IRangedAttackMob mob
+    ) {
         super(mob);
         this.delegate = Objects.requireNonNull(delegate);
 
@@ -26,8 +27,9 @@ public final class CustomNpcRangedAiWrapper extends EntityAIRangedAttack {
         }
     }
 
-    public <E extends EntityCreature>
-    CustomNpcRangedAiWrapper(NpcAiBase delegate, ICustomNpc<E> mob) {
+    public CustomNpcRangedAiWrapper(NpcAiBase delegate,
+                                    ICustomNpc<?> mob
+    ) {
         this(delegate.getMcAi(), CustomAiWrapper.checkedCast(mob.getMCEntity()));
     }
 
