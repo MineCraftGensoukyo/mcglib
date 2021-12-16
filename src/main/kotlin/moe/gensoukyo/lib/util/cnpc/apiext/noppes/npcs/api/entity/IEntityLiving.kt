@@ -3,10 +3,7 @@
 package moe.gensoukyo.lib.util.cnpc.apiext.noppes.npcs.api.entity
 
 import moe.gensoukyo.lib.util.cnpc.ai.*
-import net.minecraft.entity.EntityLivingBase
 import noppes.npcs.api.entity.ICustomNpc
-import noppes.npcs.api.entity.IEntityLivingBase
-import java.util.*
 import net.minecraft.entity.EntityLiving as McpType
 import noppes.npcs.api.entity.IEntityLiving as ApiType
 
