@@ -1,4 +1,4 @@
-package moe.gensoukyo.lib.internal.cnpc
+package moe.gensoukyo.lib.internal.common.cnpc
 
 import moe.gensoukyo.lib.MCGLib
 import moe.gensoukyo.lib.constants.ModIds

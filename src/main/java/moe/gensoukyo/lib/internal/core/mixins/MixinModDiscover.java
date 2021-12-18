@@ -1,6 +1,6 @@
 package moe.gensoukyo.lib.internal.core.mixins;
 
-import moe.gensoukyo.lib.internal.util.EqualsWrapper;
+import moe.gensoukyo.lib.internal.common.util.EqualsWrapper;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.discovery.ModCandidate;

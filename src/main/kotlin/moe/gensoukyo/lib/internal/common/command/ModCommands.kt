@@ -1,4 +1,4 @@
-package moe.gensoukyo.lib.internal.command
+package moe.gensoukyo.lib.internal.common.command
 
 import moe.gensoukyo.lib.MCGLib
 import net.minecraft.command.ICommandSender

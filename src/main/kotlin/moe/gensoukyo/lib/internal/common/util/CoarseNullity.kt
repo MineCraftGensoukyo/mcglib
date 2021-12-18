@@ -1,4 +1,4 @@
-package moe.gensoukyo.lib.internal.util
+package moe.gensoukyo.lib.internal.common.util
 
 import javax.annotation.Nonnull
 import javax.annotation.Nullable

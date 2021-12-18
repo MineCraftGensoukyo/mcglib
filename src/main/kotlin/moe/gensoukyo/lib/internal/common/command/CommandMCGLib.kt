@@ -1,11 +1,9 @@
-package moe.gensoukyo.lib.internal.command
+package moe.gensoukyo.lib.internal.common.command
 
 import moe.gensoukyo.lib.MCGLib
 import moe.gensoukyo.lib.ModConfig
 import net.minecraft.command.ICommandSender
 import net.minecraft.server.MinecraftServer
-import net.minecraftforge.common.config.Config
-import net.minecraftforge.common.config.ConfigManager
 import net.minecraftforge.server.command.CommandTreeBase
 
 /**

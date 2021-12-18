@@ -2,7 +2,7 @@ package moe.gensoukyo.lib;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import moe.gensoukyo.lib.internal.cnpc.ForgeEventWhitelist;
+import moe.gensoukyo.lib.internal.common.cnpc.ForgeEventWhitelist;
 
 import java.io.*;
 

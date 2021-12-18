@@ -1,6 +1,7 @@
 package moe.gensoukyo.lib;
 
-import moe.gensoukyo.lib.internal.command.ModCommandsKt;
+import moe.gensoukyo.lib.internal.common.command.ModCommandsKt;
+import moe.gensoukyo.lib.internal.common.network.MCGLibNetworkManager;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -11,7 +12,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 
 /**
  * @author ChloePrime
@@ -21,14 +21,13 @@ import java.nio.file.Files;
         modid = MCGLib.MODID,
         name = MCGLib.NAME,
         version = MCGLib.VERSION,
-        useMetadata = true,
-        acceptableRemoteVersions = "*"
+        useMetadata = true
 )
 public class MCGLib
 {
     public static final String MODID = "mcglib";
     public static final String NAME = "MCG Lib";
-    public static final String VERSION = "@VERSION@";
+    public static final String VERSION = "1.12.0";
 
     public static Logger getLogger() {
         return logger;
@@ -62,8 +61,9 @@ public class MCGLib
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
-        ModCommandsKt.initPermissions();
         ModConfig.reload();
+        ModCommandsKt.initPermissions();
+        MCGLibNetworkManager.init();
     }
 
     @EventHandler

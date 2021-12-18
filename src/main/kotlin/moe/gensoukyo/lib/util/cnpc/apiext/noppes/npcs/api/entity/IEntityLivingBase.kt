@@ -2,7 +2,7 @@
 
 package moe.gensoukyo.lib.util.cnpc.apiext.noppes.npcs.api.entity
 
-import moe.gensoukyo.lib.internal.util.distrust
+import moe.gensoukyo.lib.internal.common.util.distrust
 import moe.gensoukyo.lib.rpg.DamageUtils
 import moe.gensoukyo.lib.util.cnpc.npcApi
 import net.minecraft.util.text.TextComponentString
