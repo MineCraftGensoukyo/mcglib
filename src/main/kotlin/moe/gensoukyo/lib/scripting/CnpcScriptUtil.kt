@@ -4,6 +4,7 @@ import moe.gensoukyo.lib.internal.HookPool
 import net.minecraft.entity.Entity
 import net.minecraft.entity.player.EntityPlayer
 import noppes.npcs.controllers.IScriptHandler
+import noppes.npcs.controllers.data.ForgeScriptData
 import noppes.npcs.controllers.data.PlayerData
 import noppes.npcs.entity.EntityNPCInterface
 import net.minecraftforge.fml.common.eventhandler.Event as ForgeEvent
@@ -42,7 +43,13 @@ fun EntityPlayer.runPlayerScript(event: Any) {
  * @param clazz the clazz that will be used to generate script hook.
  */
 private fun IScriptHandler.runScript(event: ForgeEvent, clazz: Class<*>) {
-    HookPool[clazz].forEach { hook ->
-        this.runScript(hook, event)
+    if (this is ForgeScriptData) {
+        HookPool[clazz].forEach { hook ->
+            this.runScript(hook.function, event)
+        }
+    } else {
+        HookPool[clazz].forEach { hook ->
+            this.runScript(hook, event)
+        }
     }
 }
