@@ -26,19 +26,11 @@ object BlockEventHandler {
         if (e.world?.isRemote != false) return
         if (!isEventInWhitelist(e)) return
 
-        val block = e.world.getTileEntity(e.pos) ?: return
+        val block = e.world.getTileEntity(e.pos)
         if (block is IScriptHandler) {
             block.runScript(e)
+        } else {
+            ForgeEventHandler.runForgeEventUnchecked(e)
         }
-    }
-
-    @JvmStatic
-    @SubscribeEvent
-    @Optional.Method(modid = ModIds.CNPC)
-    fun onWorldEvent(e: WorldEvent) {
-        if (e.world.isRemote) return
-        if (!isEventInWhitelist(e)) return
-
-        ScriptController.Instance?.forgeScripts?.runScript(e)
     }
 }

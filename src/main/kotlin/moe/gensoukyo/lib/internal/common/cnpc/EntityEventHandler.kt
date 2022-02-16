@@ -26,6 +26,7 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent as FMLPlayerEvent
 @Mod.EventBusSubscriber(modid = MCGLib.MODID)
 object EntityEventHandler {
     private val badEventTypes = HashSet<Class<out Event>>()
+
     @JvmStatic
     @SubscribeEvent
     @Optional.Method(modid = ModIds.CNPC)
@@ -34,10 +35,16 @@ object EntityEventHandler {
         if (entity.world?.isRemote != false) return
         if (!isEventInWhitelist(e)) return
 
-        if (entity is EntityPlayer) {
-            runPlayerEvent(entity, e)
-        } else if (entity is EntityNPCInterface) {
-            runNpcEvent(entity, e)
+        when (entity) {
+            is EntityPlayer -> {
+                runPlayerEvent(entity, e)
+            }
+            is EntityNPCInterface -> {
+                runNpcEvent(entity, e)
+            }
+            else -> {
+                ForgeEventHandler.runForgeEventUnchecked(e)
+            }
         }
     }
 

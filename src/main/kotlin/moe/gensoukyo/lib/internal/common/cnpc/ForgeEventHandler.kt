@@ -49,6 +49,13 @@ object ForgeEventHandler {
 
         if (BLACKLIST.any { clazz -> clazz.isInstance(e) }) return
 
+        runForgeEventUnchecked(e)
+    }
+
+    /**
+     * Whitelist config won't work with this.
+     */
+    internal fun runForgeEventUnchecked(e: Event) {
         ScriptController.Instance?.forgeScripts?.runScript(e)
     }
 }
