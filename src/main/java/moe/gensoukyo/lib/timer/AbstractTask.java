@@ -24,6 +24,7 @@ public abstract class AbstractTask implements ITask {
     private static long getTimeOfArrival(TaskItem item) {
         return item.timeOfArrival;
     }
+
     private static final Logger LOGGER = LogManager.getLogger("MCGLib Tasks");
 
     private final boolean autoUpdate;
@@ -45,6 +46,12 @@ public abstract class AbstractTask implements ITask {
             return;
         }
 
+        if (isTicking(logicSide)) {
+            throw new ConcurrentModificationException(
+                    "Instantiating another AbstractTask() during a task callback is not allowed"
+            );
+        }
+
         getInstancesForSide(this.logicSide).add(new WeakReference<>(this));
     }
 
@@ -57,6 +64,10 @@ public abstract class AbstractTask implements ITask {
     @Override
     public TaskItem repeat(int delay, @Nonnull Consumer<ITaskItem> callback) {
         Preconditions.checkNotNull(callback);
+        // Prevents infinite loop.
+        if (delay <= 0) {
+            throw new IllegalArgumentException("the delay of AbstractTask.repeat must be greater than zero.");
+        }
         return newTaskItem(delay, callback, TaskItem.REPEAT);
     }
 
@@ -101,6 +112,7 @@ public abstract class AbstractTask implements ITask {
     /**
      * 获取当前时间。
      * 此处时间是个抽象的概念，可以用GameTick实现，也可以用真实时间/手动更新次数等实现。
+     *
      * @return 当前时间
      */
     protected abstract long getTickCount();
@@ -167,6 +179,8 @@ public abstract class AbstractTask implements ITask {
 
     private static final List<WeakReference<AbstractTask>> AUTO_UPDATE_SERVER = new LinkedList<>();
     private static final List<WeakReference<AbstractTask>> AUTO_UPDATE_CLIENT = new LinkedList<>();
+    private static volatile boolean clientTicking;
+    private static volatile boolean serverTicking;
 
     private static List<WeakReference<AbstractTask>> getInstancesForSide(Side side) {
         return side == Side.CLIENT ? AUTO_UPDATE_CLIENT : AUTO_UPDATE_SERVER;
@@ -192,6 +206,8 @@ public abstract class AbstractTask implements ITask {
         }
 
         Iterator<WeakReference<AbstractTask>> ite = getInstancesForSide(currentSide).iterator();
+
+        markTicking(currentSide, true);
         while (ite.hasNext()) {
             AbstractTask task = ite.next().get();
             if (task == null || !task.autoUpdate || !task.isOnRightSide(currentSide)) {
@@ -199,6 +215,19 @@ public abstract class AbstractTask implements ITask {
                 continue;
             }
             task.update();
+        }
+        markTicking(currentSide, false);
+    }
+
+    private static boolean isTicking(Side side) {
+        return side.isClient() ? clientTicking : serverTicking;
+    }
+
+    private static void markTicking(Side side, boolean value) {
+        if (side.isClient()) {
+            clientTicking = value;
+        } else {
+            serverTicking = value;
         }
     }
 }
