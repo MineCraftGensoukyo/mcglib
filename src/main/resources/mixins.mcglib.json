@@ -5,6 +5,6 @@
     "MixinNpcInterface"
   ],
   "server": [
-    "MixinModDiscover"
+
   ]
 }

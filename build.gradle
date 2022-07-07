@@ -89,7 +89,7 @@ minecraft {
 
 mixin {
     add sourceSets.main, "mixins.${modid}.refmap.json"
-    config "mixins.${modid}.json"
+    //config "mixins.${modid}.json"     // we will not do this so that the mixin will not prepare this config at first, so there will no ClassNotFoundException
 
     debug.verbose = true
     debug.export = true
@@ -110,7 +110,10 @@ dependencies {
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
 
-    implementation 'noppes.npcs:CustomNPCs_1.12.2:(05Jul20)-deobf'
+    // run deobf version of cnpc with deobf forge environment will lead to crash, so here i change it to
+    // compileOnly and add origin jar to the ./run/mods. This should also happen to you.
+    testImplementation 'noppes.npcs:CustomNPCs_1.12.2:(05Jul20)-deobf'
+    compileOnly 'noppes.npcs:CustomNPCs_1.12.2:(05Jul20)-deobf'
     implementation '_:AttributePlus:2.2.9'
 
     // Mixin
@@ -159,6 +162,8 @@ test {
 }
 
 jar {
+    // non-shadow jar
+    archiveClassifier.set "nolibs"
     manifest {
         attributes([
                 "Specification-Title": "${modid}",
@@ -169,13 +174,14 @@ jar {
                 "Implementation-Vendor" :"Minecraft Gensokyo",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
                 "FMLCorePlugin": "moe.gensoukyo.lib.internal.core.MixinBootstrapPlugin",
+                "TweakClass": "org.spongepowered.asm.launch.MixinTweaker",
                 "FMLCorePluginContainsFMLMod": true
         ])
     }
 }
 
 shadowJar {
-    archiveClassifier.set('')
+    archiveClassifier.set null
     dependencies {
         include dependency("org.spongepowered:mixin:${mixinVersion}")
     }
@@ -191,6 +197,10 @@ artifacts {
 }
 
 shadowJar.finalizedBy('reobfJar')
+
+reobf {
+    shadowJar {}
+}
 
 publishing {
     publications {
