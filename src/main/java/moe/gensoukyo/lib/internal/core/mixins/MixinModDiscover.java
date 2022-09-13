@@ -15,6 +15,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
+ * This is not required anymore in ClassTransformer based mod mixin system.
+ * @see moe.gensoukyo.lib.internal.core.MixinBootstrapPlugin
+ * @see moe.gensoukyo.lib.internal.core.NpcInterfaceTransformer
  * Manually distinct repetitive ModCandidates.
  * @author ChloePrime
  */
