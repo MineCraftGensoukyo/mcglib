@@ -3,6 +3,7 @@ package moe.gensoukyo.lib.internal.core;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.Name;
 import org.spongepowered.asm.launch.MixinBootstrap;
+import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.asm.service.IMixinService;
 import org.spongepowered.asm.service.ITransformerProvider;
 import org.spongepowered.asm.service.MixinService;
@@ -38,10 +39,18 @@ public class MixinBootstrapPlugin implements IFMLLoadingPlugin {
 
     // 防止重入
     private static String[] excludeDelegate(String[] ary) {
-        IMixinService service = MixinService.getService();
-        ITransformerProvider itp = service == null ? null : service.getTransformerProvider();
-        if (itp != null) {
-            for (String str : ary) itp.addTransformerExclusion("$wrapper.".concat(str));
+        try {
+            IMixinService service = MixinService.getService();
+            ITransformerProvider itp = service == null ? null : service.getTransformerProvider();
+            if (itp != null) {
+                for (String str : ary) itp.addTransformerExclusion(str);
+            }
+        } catch (NoSuchMethodError error) {
+            // ITransformerProvider is not available at this version, maybe 8.0 below
+            MixinEnvironment env = MixinEnvironment.getCurrentEnvironment();
+            if (env != null) {
+                for (String str : ary) env.addTransformerExclusion(str);
+            }
         }
         return ary;
     }

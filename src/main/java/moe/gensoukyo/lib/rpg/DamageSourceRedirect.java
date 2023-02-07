@@ -17,8 +17,10 @@ public class DamageSourceRedirect extends DamageSource {
 
     public DamageSourceRedirect(DamageSource source) {
         super("redirect");
+        DamageSource begin = source;
         while (source instanceof DamageSourceRedirect) {
             source = ((DamageSourceRedirect) source).source;
+            if (source == begin) throw new IllegalStateException("self-linked redirect chain");
         }
         this.source = source;
     }
