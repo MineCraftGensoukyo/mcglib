@@ -1,0 +1,3 @@
+moduleName=MCG Groovy Extension
+moduleVersion=0.1.0
+extensionClasses=moe.gensoukyo.lib.server.EntityCastingKt,moe.gensoukyo.lib.server.EntityCastingCnpcKt

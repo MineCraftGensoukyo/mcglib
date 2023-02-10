@@ -1,7 +1,9 @@
 package moe.gensoukyo.lib.rpg;
 
+import moe.gensoukyo.lib.constants.ModIds;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.DamageSource;
+import net.minecraftforge.fml.common.Optional;
 import noppes.npcs.api.IDamageSource;
 
 import javax.annotation.Nullable;
@@ -25,8 +27,9 @@ public class DamageSourceRedirect extends DamageSource {
         this.source = source;
     }
 
-    public DamageSourceRedirect(IDamageSource source) {
-        this(source.getMCDamageSource());
+    @Optional.Method(modid = ModIds.CNPC)
+    public static DamageSourceRedirect wrap(IDamageSource source) {
+        return new DamageSourceRedirect(source.getMCDamageSource());
     }
 
     @Override
