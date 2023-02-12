@@ -11,9 +11,18 @@ import javax.annotation.Nullable;
 /**
  * Used to redirect the damage from on entity to another to block damages directly called on entity.
  * Catch a DamageSource from event, generate a redirected damageSource, call damage method on another entity.
- * In another entity, filter damageSource by instanceof or REDIRECT prefix.
+ * In another entity, filter damageSource by instanceof or "redirect" prefix.
  */
 public class DamageSourceRedirect extends DamageSource {
+
+    @Optional.Method(modid = ModIds.CNPC)
+    public static DamageSourceRedirect wrap(IDamageSource source) {
+        return new DamageSourceRedirect(source.getMCDamageSource());
+    }
+
+    public static DamageSourceRedirect wrap(DamageSource source) {
+        return new DamageSourceRedirect(source);
+    }
 
     private final DamageSource source;
 
@@ -27,11 +36,6 @@ public class DamageSourceRedirect extends DamageSource {
         this.source = source;
     }
 
-    @Optional.Method(modid = ModIds.CNPC)
-    public static DamageSourceRedirect wrap(IDamageSource source) {
-        return new DamageSourceRedirect(source.getMCDamageSource());
-    }
-
     @Override
     public boolean isUnblockable() {
         return source.isUnblockable();
@@ -40,6 +44,36 @@ public class DamageSourceRedirect extends DamageSource {
     @Override
     public boolean isProjectile() {
         return source.isProjectile();
+    }
+
+    @Override
+    public boolean isCreativePlayer() {
+        return source.isCreativePlayer();
+    }
+
+    @Override
+    public boolean isDamageAbsolute() {
+        return source.isDamageAbsolute();
+    }
+
+    @Override
+    public boolean isDifficultyScaled() {
+        return source.isDifficultyScaled();
+    }
+
+    @Override
+    public boolean isExplosion() {
+        return source.isExplosion();
+    }
+
+    @Override
+    public boolean isFireDamage() {
+        return source.isFireDamage();
+    }
+
+    @Override
+    public boolean isMagicDamage() {
+        return source.isMagicDamage();
     }
 
     @Nullable

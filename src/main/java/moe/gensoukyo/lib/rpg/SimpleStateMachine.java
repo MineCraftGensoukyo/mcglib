@@ -51,6 +51,12 @@ public final class SimpleStateMachine {
         }
     }
 
+    public void reset() {
+        if (current > 0) {
+            next = 0;
+        }
+    }
+
     private void runState(int state, Phase phase, Object... obj) {
         Invoker inv = invokers[state * 3 + phase.ordinal()];
         if (inv == null) return;
