@@ -186,6 +186,10 @@ shadowJar {
     dependencies {
         include dependency("org.spongepowered:mixin:${mixinVersion}")
     }
+    exclude('org/spongepowered/asm/launch/MixinLaunchPlugin.class')
+    exclude('org/spongepowered/asm/launch/MixinTransformationService.class')
+    exclude('org/spongepowered/asm/launch/platform/container/ContainerHandleModLauncherEx.class')
+    exclude('org/spongepowered/asm/launch/platform/container/ContainerHandleModLauncherEx$SecureJarResource.class')
     exclude('META-INF/INDEX.LIST')
     exclude('META-INF/*.SF')
     exclude('META-INF/*.DSA')

@@ -29,8 +29,7 @@ object BlockEventHandler {
         val block = e.world.getTileEntity(e.pos)
         if (block is IScriptHandler) {
             block.runScript(e)
-        } else {
-            ForgeEventHandler.runForgeEventUnchecked(e)
         }
+        ForgeEventHandler.runForgeEventUnchecked(e)
     }
 }

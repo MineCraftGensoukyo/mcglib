@@ -42,10 +42,8 @@ object EntityEventHandler {
             is EntityNPCInterface -> {
                 runNpcEvent(entity, e)
             }
-            else -> {
-                ForgeEventHandler.runForgeEventUnchecked(e)
-            }
         }
+        ForgeEventHandler.runForgeEventUnchecked(e)
     }
 
     @JvmStatic
@@ -54,6 +52,7 @@ object EntityEventHandler {
     fun onFMLPlayerEvent(e: FMLPlayerEvent) {
         if (!isEventInWhitelist(e)) return
         runPlayerEvent(e.player ?: return, e)
+        ForgeEventHandler.runForgeEventUnchecked(e)
     }
 
     private fun runPlayerEvent(player: EntityPlayer, event: Event) {
