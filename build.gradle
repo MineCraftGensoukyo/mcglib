@@ -209,7 +209,7 @@ reobf {
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {
+        mcglib(MavenPublication) {
             artifact jar
         }
     }
